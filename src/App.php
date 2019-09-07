@@ -18,18 +18,6 @@ use Feather\Init\Http\Request;
 use Feather\Init\Http\Response;
 use Feather\Session\Session;
 
-if(!defined(ABS_PATH)){
-    throw new AppException("Absolute path constant \"ABS_PATH\" is not defined. This constant should be the root path of your applixation",1050);
-}
-
-if(!defined(STORAGE_PATH)){
-    throw new AppException("Storage path constant \"STORAGE_PATH\" is not defined. This constant should be the absolute path of storage folder",1051);
-}
-
-if(!defined(VIEWS_PATH)){
-    throw new AppException("Views path constant \"VIEWS_PATH\" is not defined. This constant should be the absolute path of the parent directory containing your views",1051);
-}
-
 function myErrorHandler($code,$message,$file,$line){
     
     $msg ="ERR CODE: $code\nMESSAGE:$message\nFILE:$file || $line";
@@ -89,6 +77,12 @@ class App {
     protected static $sessionHandler;
     private static $self;
     
+    protected $rootPath;
+    protected $configPath;
+    protected $logPath;
+    protected $viewsPath;
+    
+    
     private function __construct() {
         $this->request = Request::getInstance();
         $this->response = Response::getInstance();
@@ -119,7 +113,8 @@ class App {
         $this->response->setViewPath($viewPath);
     }
     
-    public static function log($msg,$filePath=STORAGE_PATH.'/logs/app_log'){
+    public static function log($msg){
+        $filePath = $this->logPath.'/app_log';
         error_log(date('Y-m-d H:i:s').' - '.$msg,3,$filePath);
     }
     
@@ -168,7 +163,7 @@ class App {
             $page = '/'.$page;
         }
         
-        if(file_exists(VIEWS_PATH.$page)){
+        if(file_exists($this->viewsPath.$page)){
             $this->errorPage = $page;
         }
     }
@@ -176,7 +171,7 @@ class App {
     public static function getConfig($configPath){
         try{
             $fullPath = stripos($configPath,'config/') === false? 'config/'.$configPath : $configPath;
-            $config = include $fullPath;
+            $config = include $this->configPath.'/'.$fullPath;
             return $config;
         }
         catch(\Exception $e){
@@ -187,7 +182,7 @@ class App {
     
     public static function startSession(){
         
-        $config = include 'config/session.php';
+        $config = include $this->configPath.'/session.php';
         
         if(!isset($_SESSION)){
             self::initSession($config);
@@ -220,7 +215,7 @@ class App {
         }
         
         
-        $config = include 'config/cache.php';
+        $config = include $this->configPath.'/cache.php';
         
         switch($config['driver']){
             
@@ -239,6 +234,13 @@ class App {
                 $this->cacheHandler = \Feather\Cache\RedisCache::getInstance($redisConfig['server'], $redisConfig['port'], $redisConfig['server'],$redisConfig['connOptions']);
                 break;
         }
+    }
+    
+    public function setBasePaths($root,$config,$log,$views){
+        $this->absPath = $root;
+        $this->configPath = $config;
+        $this->logPath = $log;
+        $this->viewsPath = $views;
     }
     
     protected static function initSession($config){
