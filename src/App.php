@@ -110,7 +110,7 @@ class App {
         $this->router->setDefaultController($defaultController);
         $this->router->setControllerNamespace($ctrlNamespace);
         $this->router->setControllerPath($this->rootPath.'/Controllers/');
-        $this->response->setViewPath($this->viewsPath);
+        $this->response->setViewPath(self::$viewsPath);
     }
     
     public static function log($msg){
@@ -215,7 +215,7 @@ class App {
         }
         
         
-        $config = include $this->configPath.'/cache.php';
+        $config = include self::$configPath.'/cache.php';
         
         switch($config['driver']){
             
