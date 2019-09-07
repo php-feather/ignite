@@ -182,7 +182,7 @@ class App {
     
     public static function startSession(){
         
-        $config = include $this->configPath.'/session.php';
+        $config = include self::$configPath.'/session.php';
         
         if(!isset($_SESSION)){
             self::initSession($config);
