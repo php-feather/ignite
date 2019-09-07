@@ -114,7 +114,7 @@ class App {
     }
     
     public static function log($msg){
-        $filePath = $this->logPath.'/app_log';
+        $filePath = $self::$logPath.'/app_log';
         error_log(date('Y-m-d H:i:s').' - '.$msg,3,$filePath);
     }
     
@@ -171,7 +171,7 @@ class App {
     public static function getConfig($configPath){
         try{
             $fullPath = stripos($configPath,'config/') === false? 'config/'.$configPath : $configPath;
-            $config = include $this->configPath.'/'.$fullPath;
+            $config = include $self::$configPath.'/'.$fullPath;
             return $config;
         }
         catch(\Exception $e){
