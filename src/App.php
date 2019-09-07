@@ -77,10 +77,10 @@ class App {
     protected static $sessionHandler;
     private static $self;
     
-    protected $rootPath;
-    protected $configPath;
-    protected $logPath;
-    protected $viewsPath;
+    protected static $rootPath;
+    protected static $configPath;
+    protected static $logPath;
+    protected static $viewsPath;
     
     
     private function __construct() {
@@ -106,11 +106,11 @@ class App {
         require '../helpers/view_helpers.php';
     }
     
-    public function init($ctrlNamespace,$defaultController,$viewPath){
+    public function init($ctrlNamespace,$defaultController){
         $this->router->setDefaultController($defaultController);
         $this->router->setControllerNamespace($ctrlNamespace);
-        $this->router->setControllerPath(ABS_PATH.'/Controllers/');
-        $this->response->setViewPath($viewPath);
+        $this->router->setControllerPath($this->rootPath.'/Controllers/');
+        $this->response->setViewPath($this->viewsPath);
     }
     
     public static function log($msg){
@@ -236,11 +236,11 @@ class App {
         }
     }
     
-    public function setBasePaths($root,$config,$log,$views){
-        $this->absPath = $root;
-        $this->configPath = $config;
-        $this->logPath = $log;
-        $this->viewsPath = $views;
+    public static function setBasePaths($root,$config,$log,$views){
+        self::$rootPath = $root;
+        self::$configPath = $config;
+        self::$logPath = $log;
+        self::$viewsPath = $views;
     }
     
     protected static function initSession($config){
