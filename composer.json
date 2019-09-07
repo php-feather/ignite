@@ -1,0 +1,22 @@
+{
+    "name": "php-feather/ignite",
+    "description": "Feather Ignite - PHP Feather Framework Engine",
+    "license": "MIT",
+
+    "authors": [
+        {
+            "name": "Francis Carbah",
+            "email": "afrounit@hotmail.com"
+        }
+    ],
+    "require": {
+        "php-feather/init": "dev-master",
+        "php-feather/cache": "dev-master",
+        "php-feather/session": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Feather\\Ignite\\": "src/"
+        }
+    }
+}
