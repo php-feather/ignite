@@ -18,15 +18,15 @@ use Feather\Init\Http\Request;
 use Feather\Init\Http\Response;
 use Feather\Session\Session;
 
-if(!define(ABS_PATH)){
+if(!defined(ABS_PATH)){
     throw new AppException("Absolute path constant \"ABS_PATH\" is not defined. This constant should be the root path of your applixation",1050);
 }
 
-if(!define(STORAGE_PATH)){
+if(!defined(STORAGE_PATH)){
     throw new AppException("Storage path constant \"STORAGE_PATH\" is not defined. This constant should be the absolute path of storage folder",1051);
 }
 
-if(!define(VIEWS_PATH)){
+if(!defined(VIEWS_PATH)){
     throw new AppException("Views path constant \"VIEWS_PATH\" is not defined. This constant should be the absolute path of the parent directory containing your views",1051);
 }
 
