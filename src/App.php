@@ -103,9 +103,9 @@ class App {
     }
     
     public function boot(){
-        require '../bootstrap/eloquent.php';
-        require '../routes/routes.php';
-        require '../helpers/view_helpers.php';
+        require self::$rootPath.'/bootstrap/eloquent.php';
+        require self::$rootPath.'/routes/routes.php';
+        require self::$rootPath.'/helpers/view_helpers.php';
     }
     
     public function init($ctrlNamespace,$defaultController){
@@ -152,7 +152,7 @@ class App {
     }
     
     public function cache(){
-        return $this->cacheHandler;
+        return self::$cacheHandler;
     }
     
     public function registerErrorHandler(ErrorHandler $errorhandler){
