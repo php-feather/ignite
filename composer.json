@@ -9,7 +9,9 @@
             "email": "afrounit@hotmail.com"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
+        "php": ">=7.0",
         "php-feather/init": "dev-master",
         "php-feather/cache": "dev-master",
         "php-feather/session": "dev-master"
