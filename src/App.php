@@ -221,17 +221,17 @@ class App {
             
             case 'file':
             default :
-                $this->cacheHandler = \Feather\Cache\FileCache::getInstance($config['filePath']);
+                self::$cacheHandler = \Feather\Cache\FileCache::getInstance($config['filePath']);
                 break;
             
             case 'database':
                 $dbConfig = $config['dbConfig'];
-                $this->cacheHandler = \Feather\Cache\DatabaseCache::getInstance($dbConfig[$dbConfig['active']]); 
+                self::$cacheHandler = \Feather\Cache\DatabaseCache::getInstance($dbConfig[$dbConfig['active']]); 
                 break;
             
             case 'redis':
                 $redisConfig = $config['redis'];
-                $this->cacheHandler = \Feather\Cache\RedisCache::getInstance($redisConfig['server'], $redisConfig['port'], $redisConfig['server'],$redisConfig['connOptions']);
+                self::$cacheHandler = \Feather\Cache\RedisCache::getInstance($redisConfig['server'], $redisConfig['port'], $redisConfig['server'],$redisConfig['connOptions']);
                 break;
         }
     }
