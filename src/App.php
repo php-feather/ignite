@@ -109,7 +109,7 @@ class App {
     public function init($ctrlNamespace,$defaultController){
         $this->router->setDefaultController($defaultController);
         $this->router->setControllerNamespace($ctrlNamespace);
-        $this->router->setControllerPath($this->rootPath.'/Controllers/');
+        $this->router->setControllerPath(self::$rootPath.'/Controllers/');
         $this->response->setViewPath(self::$viewsPath);
     }
     
