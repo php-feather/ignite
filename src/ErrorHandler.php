@@ -15,6 +15,6 @@ namespace Feather\Ignite;
  */
 interface ErrorHandler {
     
-    public function handle($code,$message,$file,$line);
+    public function handle($errorCode,$errorMessage,$filename,$lineNumber);
     
 }

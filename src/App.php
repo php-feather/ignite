@@ -16,7 +16,9 @@ namespace Feather\Ignite;
 use Feather\Init\Http\Router;
 use Feather\Init\Http\Request;
 use Feather\Init\Http\Response;
-use Feather\Session\Session;
+use Feather\Session\Drivers\SessionHandlerContract;
+use Feather\Cache\Contracts\Cache;
+
 
 function myErrorHandler($code,$message,$file,$line){
     
@@ -197,13 +199,14 @@ class App {
         
     }
     
-    public static function registerCacheHandler($cacheHandler){
+    public static function registerCacheHandler(Cache $cacheHandler){
         self::$cacheHandler = $cacheHandler;
     }
     
     
-    public static function registerSessionHandler($sessionHandler){
+    public static function registerSessionHandler(SessionHandlerContract $sessionHandler){
         self::$sessionHandler = $sessionHandler;
+        self::$sessionHandler->activate();
     }
     
     
@@ -246,25 +249,29 @@ class App {
     protected static function initSession($config){
         
         if(self::$sessionHandler != null){
-            self::$sessionHandler;
+            return;
         }
         
         switch($config['driver']){
             
             case 'file':
             default :
-                new \Feather\Session\Drivers\FileDriver($config['filePath']);
+                self::$sessionHandler = new \Feather\Session\Drivers\FileDriver($config['filePath']);
                 break;
             
             case 'database':
                 $dbConfig = $config['dbConfig'];
-                new \Feather\Session\Drivers\DatabaseDriver($dbConfig[$dbConfig['ative']]);               
+                self::$sessionHandler = new \Feather\Session\Drivers\DatabaseDriver($dbConfig[$dbConfig['ative']]);               
                 break;
             
             case 'redis':
                 $redisConfig = $config['redis'];
-                new \Feather\Session\Drivers\RedisDriver($redisConfig['server'], $redisConfig['port'], $redisConfig['server']);                
+                self::$sessionHandler = new \Feather\Session\Drivers\RedisDriver($redisConfig['server'], $redisConfig['port'], $redisConfig['server']);                
                 break;
+        }
+        
+        if(self::$sessionHandler != null){
+            self::$sessionHandler->activate();
         }
         
     }

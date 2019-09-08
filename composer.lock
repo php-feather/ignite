@@ -187,12 +187,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-feather/session.git",
-                "reference": "1f8e4408a60d4484a147274f948e7d04b68ca094"
+                "reference": "06af4b5620441fd6ecb26d30b796d8f86e2ff04c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-feather/session/zipball/1f8e4408a60d4484a147274f948e7d04b68ca094",
-                "reference": "1f8e4408a60d4484a147274f948e7d04b68ca094",
+                "url": "https://api.github.com/repos/php-feather/session/zipball/06af4b5620441fd6ecb26d30b796d8f86e2ff04c",
+                "reference": "06af4b5620441fd6ecb26d30b796d8f86e2ff04c",
                 "shasum": ""
             },
             "require": {
@@ -215,7 +215,7 @@
                 }
             ],
             "description": "Feather Session",
-            "time": "2019-09-07T15:49:19+00:00"
+            "time": "2019-09-08T13:31:56+00:00"
         },
         {
             "name": "predis/predis",
