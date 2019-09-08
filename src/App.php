@@ -163,7 +163,7 @@ class App {
             $page = '/'.$page;
         }
         
-        if(file_exists($this->viewsPath.$page)){
+        if(file_exists(self::$viewsPath.$page)){
             $this->errorPage = $page;
         }
     }
