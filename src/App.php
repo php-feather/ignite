@@ -173,7 +173,7 @@ class App {
     public static function getConfig($configPath){
         try{
             $fullPath = stripos($configPath,'config/') === false? 'config/'.$configPath : $configPath;
-            $config = include $self::$configPath.'/'.$fullPath;
+            $config = include self::$configPath.'/'.$fullPath;
             return $config;
         }
         catch(\Exception $e){
