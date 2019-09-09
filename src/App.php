@@ -116,7 +116,7 @@ class App {
     }
     
     public static function log($msg){
-        $filePath = $self::$logPath.'/app_log';
+        $filePath = self::$logPath.'/app_log';
         error_log(date('Y-m-d H:i:s').' - '.$msg,3,$filePath);
     }
     
