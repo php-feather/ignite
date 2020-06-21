@@ -83,6 +83,7 @@ class App {
     protected static $configPath;
     protected static $logPath;
     protected static $viewsPath;
+    protected static $tempViewsPath;
     
     
     private function __construct() {
@@ -112,7 +113,7 @@ class App {
         $this->router->setDefaultController($defaultController);
         $this->router->setControllerNamespace($ctrlNamespace);
         $this->router->setControllerPath(self::$rootPath.'/Controllers/');
-        $this->response->setViewPath(self::$viewsPath);
+        $this->response->setViewPath(self::$viewsPath,self::$tempViewsPath);
     }
     
     public static function log($msg){
@@ -238,11 +239,12 @@ class App {
         }
     }
     
-    public static function setBasePaths($root,$config,$log,$views){
+    public static function setBasePaths($root,$config,$log,$views,$tempViews=''){
         self::$rootPath = $root;
         self::$configPath = $config;
         self::$logPath = $log;
         self::$viewsPath = $views;
+        self::$tempViewsPath = $tempViews;
     }
     
     protected static function initSession($config){
