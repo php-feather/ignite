@@ -234,7 +234,7 @@ class App {
             
             case 'redis':
                 $redisConfig = $config['redis'];
-                self::$cacheHandler = \Feather\Cache\RedisCache::getInstance($redisConfig['server'], $redisConfig['port'], $redisConfig['server'],$redisConfig['connOptions']);
+                self::$cacheHandler = \Feather\Cache\RedisCache::getInstance($redisConfig['host'], $redisConfig['port'], $redisConfig['scheme'],$redisConfig['connOptions']);
                 break;
         }
     }
@@ -267,7 +267,7 @@ class App {
             
             case 'redis':
                 $redisConfig = $config['redis'];
-                self::$sessionHandler = new \Feather\Session\Drivers\RedisDriver($redisConfig['server'], $redisConfig['port'], $redisConfig['server']);                
+                self::$sessionHandler = new \Feather\Session\Drivers\RedisDriver($redisConfig['host'], $redisConfig['port'], $redisConfig['scheme']);                
                 break;
         }
         
