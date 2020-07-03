@@ -148,7 +148,7 @@ class App {
         
         else if($this->errorPage){
             $viewEngine = $this->viewEngines[strtolower($this->errorViewEngine)];
-            $this->response->renderView($viewEngine->render($this->errorPage,['message'=>$msg,'code'=>$code]),$code);
+            $this->response->renderView($viewEngine->render($this->errorPage,['message'=>$msg,'code'=>$code]),[],$code);
         }
         
         else{
