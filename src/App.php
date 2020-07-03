@@ -75,6 +75,7 @@ class App {
     protected $request;
     protected $router;
     protected $errorPage;
+    protected $errorViewEngine = 'native';
     /** @var array **/
     protected $viewEngines = [];
     protected static $errorHandler;
@@ -142,14 +143,17 @@ class App {
         
         
         if($this->request->isAjax){
-            return $this->response->renderJson($msg,[],$code);
+            $this->response->renderJson($msg,[],$code);
         }
         
-        if($this->errorPage){
-            return $this->response->renderView($this->errorPage,['message'=>$msg,'code'=>$code],$code);
+        else if($this->errorPage){
+            $viewEngine = $this->viewEngines[strtolower($this->errorViewEngine)];
+            $this->response->renderView($viewEngine->render($this->errorPage,['message'=>$msg,'code'=>$code]),$code);
         }
         
-        $this->response->rawOutput($msg,$code,['Content-Type: text/html']);
+        else{
+            $this->response->rawOutput($msg,$code,['Content-Type: text/html']);
+        }
         
         return $this->response->send();
 
@@ -182,8 +186,12 @@ class App {
         }
         return null;
     }
-    
-    public function setErrorPage($page){
+    /**
+     * 
+     * @param string $page
+     * @param string $pageRenderer Registered name of view Engine
+     */
+    public function setErrorPage($page,$pageRenderer){
         
         if(stripos($page,'/') > 0){
             $page = '/'.$page;
@@ -192,6 +200,8 @@ class App {
         if(file_exists(self::$viewsPath.$page)){
             $this->errorPage = $page;
         }
+        
+        $this->errorViewEngine = $pageRenderer;
     }
     
     public static function getConfig($configPath){
