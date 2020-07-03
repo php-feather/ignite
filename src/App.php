@@ -20,7 +20,14 @@ use Feather\Init\Http\Response;
 use Feather\Session\Drivers\SessionHandlerContract;
 use Feather\Cache\Contracts\Cache;
 
-
+/**
+ * Handles errors thrown by application
+ * @param int|string $code
+ * @param string $message
+ * @param string $file
+ * @param int $line
+ * @return void
+ */
 function myErrorHandler($code,$message,$file,$line){
     
     $msg ="ERR CODE: $code\nMESSAGE:$message\nFILE:$file || $line";
@@ -36,9 +43,12 @@ function myErrorHandler($code,$message,$file,$line){
     if(preg_match('/(.*?)Controllers(.*?)\'\snot\sfound/i',$message)){
         return $app->errorResponse('Page Not Found',404);
     }
-    $app->errorResponse('Internal Server Error'.PHP_EOL.$message,500);
+    $app->errorResponse('Internal Server Error'.PHP_EOL.$message,500,$file,$line);
 }
-
+/**
+ * Handles fatal errors thrown by application
+ * @return boolean|void
+ */
 function fatalErrorHandler(){
     $last_error = error_get_last();
     
@@ -56,6 +66,7 @@ function fatalErrorHandler(){
     }
 }
 
+//Register fatal error handler
 register_shutdown_function(function(){
     fatalErrorHandler();   
 });
@@ -76,11 +87,19 @@ class App {
     protected $router;
     protected $errorPage;
     protected $errorViewEngine = 'native';
+    
     /** @var array **/
     protected $viewEngines = [];
+    
+    /** @var \Feather\Ignite\ErrorHandler **/
     protected static $errorHandler;
+    
+    /** @var \Feather\Cache\Contracts\Cache **/
     protected static $cacheHandler;
+    
+    /** @var \Feather\Session\Drivers\SessionHandlerContract **/
     protected static $sessionHandler;
+    
     private static $self;
     
     protected static $rootPath;
@@ -109,19 +128,31 @@ class App {
     public function end(){
         die;
     }
-    
+    /**
+     * Load Require files
+     * Array of absolute file paths
+     * @param array $files
+     */
     public function boot(array $files=[]){
         foreach($files as $file){
             require $file;
         }
     }
-    
+    /**
+     * 
+     * @param string $ctrlNamespace
+     * @param string $defaultController Name of default Controller
+     * @param string $controllersDir Adbsolute path to controllers directory
+     */
     public function init($ctrlNamespace,$defaultController,$controllersDir){
         $this->router->setDefaultController($defaultController);
         $this->router->setControllerNamespace($ctrlNamespace);
         $this->router->setControllerPath($controllersDir);
     }
-    
+    /**
+     * Logs message to file
+     * @param string $msg
+     */
     public static function log($msg){
         $filePath = self::$logPath.'/app_log';
         error_log(date('Y-m-d H:i:s').' - '.$msg,3,$filePath);
@@ -136,8 +167,15 @@ class App {
             return $this->errorResponse($e->getMessage(),$e->getCode());
         }
     }
-    
-    public function errorResponse($msg='',$code=400){
+    /**
+     * 
+     * @param string $msg
+     * @param int| string $code
+     * @param string $file
+     * @param int $line
+     * @return void
+     */
+    public function errorResponse($msg='',$code=400,$file='',$line=null){
         
         ob_clean();
         
@@ -148,7 +186,7 @@ class App {
         
         else if($this->errorPage){
             $viewEngine = $this->viewEngines[strtolower($this->errorViewEngine)];
-            $this->response->renderView($viewEngine->render($this->errorPage,['message'=>$msg,'code'=>$code]),[],$code);
+            $this->response->renderView($viewEngine->render($this->errorPage,['message'=>$msg,'code'=>$code,'file'=>$file,'line'=>$line]),[],$code);
         }
         
         else{
@@ -159,21 +197,37 @@ class App {
 
     }
     
+    /**
+     * Get instance of App error Handler
+     * @return \Feather\Ignite\ErrorHandler $errorhandler | null
+     */
     public function errorHandler(){
         return self::$errorHandler;
     }
-    
+    /**
+     * 
+     * @return \Feather\Cache\Contracts\Cache |null
+     */
     public function cache(){
         return self::$cacheHandler;
     }
-    
+    /**
+     * 
+     * @param \Feather\Ignite\ErrorHandler $errorhandler
+     */
     public function registerErrorHandler(ErrorHandler $errorhandler){
         $this->errorHandler = $errorhandler;
     }
     
+    /**
+     * 
+     * @param string $name
+     * @param ViewInterface $engine
+     */
     public function registerViewEngine($name, ViewInterface $engine){
         $this->viewEngines[strtolower($name)] = $engine;
     }
+    
     /**
      * 
      * @param string $registeredName
@@ -188,7 +242,29 @@ class App {
     }
     /**
      * 
-     * @param string $page
+     * @return string
+     */
+    public function basePath(){
+        return self::$rootPath;
+    }
+    /**
+     * 
+     * @return string
+     */
+    public function configPath(){
+        return self::$configPath;
+    }
+    /**
+     * 
+     * @return string
+     */
+    public function viewsPath(){
+        return self::$viewsPath;
+    }
+    
+    /**
+     * Sets page to display errors on and render engine to use when rendering page
+     * @param string $page 
      * @param string $pageRenderer Registered name of view Engine
      */
     public function setErrorPage($page,$pageRenderer){
@@ -204,6 +280,11 @@ class App {
         $this->errorViewEngine = $pageRenderer;
     }
     
+    /**
+     * Load configuration from config file path
+     * @param string $configPath
+     * @return mixed
+     */
     public static function getConfig($configPath){
         try{
             $fullPath = stripos($configPath,'/') === 0? $configPath : '/'.$configPath;
@@ -216,6 +297,10 @@ class App {
         }
     }
     
+    /**
+     * Starts session
+     * @returns void
+     */
     public static function startSession(){
         
         $config = include self::$configPath.'/session.php';
@@ -232,17 +317,27 @@ class App {
         
     }
     
+    /**
+     * 
+     * @param \Feather\Cache\Contracts\Cache $cacheHandler
+     */
     public static function registerCacheHandler(Cache $cacheHandler){
         self::$cacheHandler = $cacheHandler;
     }
     
-    
+    /**
+     * 
+     * @param \Feather\Session\Drivers\SessionHandlerContract $sessionHandler
+     */
     public static function registerSessionHandler(SessionHandlerContract $sessionHandler){
         self::$sessionHandler = $sessionHandler;
         self::$sessionHandler->activate();
     }
     
-    
+    /**
+     * Sets Application caching
+     * @return void
+     */
     public function setCaching(){
         
         
@@ -272,6 +367,14 @@ class App {
         }
     }
     
+    /**
+     * Sets absolute paths for Application
+     * @param string $root Absolute path of application directory
+     * @param string $config Absolute path to configs directory
+     * @param string $log Absolute path to log directory
+     * @param string $views Absolute path to views directory
+     * @param string $tempViews Absolute path to temporary | cache views path 
+     */
     public static function setBasePaths($root,$config,$log,$views,$tempViews=''){
         self::$rootPath = $root;
         self::$configPath = $config;
@@ -279,7 +382,11 @@ class App {
         self::$viewsPath = $views;
         self::$tempViewsPath = $tempViews;
     }
-    
+    /**
+     * 
+     * @param array $config
+     * @return void
+     */
     protected static function initSession($config){
         
         if(self::$sessionHandler != null){
@@ -309,5 +416,7 @@ class App {
         }
         
     }
+    
+    
     
 }

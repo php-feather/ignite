@@ -14,7 +14,13 @@ namespace Feather\Ignite;
  * @author fcarbah
  */
 interface ErrorHandler {
-    
+    /**
+     * 
+     * @param string|int $errorCode
+     * @param string $errorMessage
+     * @param string $filename
+     * @param int $lineNumber
+     */
     public function handle($errorCode,$errorMessage,$filename,$lineNumber);
     
 }
