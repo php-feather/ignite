@@ -150,6 +150,8 @@ class App {
         }
         
         return $this->response->rawOutput($msg,$code,['Content-Type: text/html']);
+        
+        $this->response->send();
 
     }
     
