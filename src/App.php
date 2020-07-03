@@ -149,9 +149,9 @@ class App {
             return $this->response->renderView($this->errorPage,['message'=>$msg,'code'=>$code],$code);
         }
         
-        return $this->response->rawOutput($msg,$code,['Content-Type: text/html']);
+        $this->response->rawOutput($msg,$code,['Content-Type: text/html']);
         
-        $this->response->send();
+        return $this->response->send();
 
     }
     
