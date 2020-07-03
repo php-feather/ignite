@@ -77,7 +77,7 @@ function get_value($name,$default=''){
  * @param string $path
  * @return string
  */
-function asset($relPath){
+function asset($path){
     $relPath = substr($path, 0,1) == '/'? substr($path, 1) : $path;
     return stripos($relPath,'assets/') === 0? $relPath : '/assets/'.$relPath;
     
