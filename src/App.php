@@ -94,7 +94,10 @@ class App {
         $this->response = Response::getInstance();
         $this->router = Router::getInstance();
     }
-    
+    /**
+     * 
+     * @return \Feather\Ignite\App
+     */
     public static function getInstance(){
         if(self::$self == NULL){
             self::$self  = new App();
@@ -165,7 +168,11 @@ class App {
     public function registerViewEngine($name, ViewInterface $engine){
         $this->viewEngines[strtolower($name)] = $engine;
     }
-    
+    /**
+     * 
+     * @param string $registeredName
+     * @return \Feather\View\ViewInterface | null
+     */
     public function getViewEngine($registeredName){
         $name = strtolower($registeredName);
         if(isset($this->viewEngines[$name])){
