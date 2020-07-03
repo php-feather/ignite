@@ -281,6 +281,16 @@ class App {
     }
     
     /**
+     * Enable router caching
+     */
+    public function activateRouterCache(){
+        if(self::$cacheHandler){
+            Router::getInstance()->setCacheHandler(self::$cacheHandler);
+        }
+        
+    }
+    
+    /**
      * Load configuration from config file path
      * @param string $configPath
      * @return mixed
