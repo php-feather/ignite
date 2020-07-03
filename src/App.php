@@ -8,6 +8,7 @@
 
 namespace Feather\Ignite;
 
+use Feather\View\ViewInterface;
 /**
  * Description of App
  *
@@ -74,6 +75,8 @@ class App {
     protected $request;
     protected $router;
     protected $errorPage;
+    /** @var array **/
+    protected $viewEngines = [];
     protected static $errorHandler;
     protected static $cacheHandler;
     protected static $sessionHandler;
@@ -103,17 +106,16 @@ class App {
         die;
     }
     
-    public function boot(){
-        require self::$rootPath.'/bootstrap/eloquent.php';
-        require self::$rootPath.'/routes/routes.php';
-        require self::$rootPath.'/helpers/view_helpers.php';
+    public function boot(array $files=[]){
+        foreach($files as $file){
+            require $file;
+        }
     }
     
-    public function init($ctrlNamespace,$defaultController){
+    public function init($ctrlNamespace,$defaultController,$controllersDir){
         $this->router->setDefaultController($defaultController);
         $this->router->setControllerNamespace($ctrlNamespace);
-        $this->router->setControllerPath(self::$rootPath.'/Controllers/');
-        $this->response->setViewPath(self::$viewsPath,self::$tempViewsPath);
+        $this->router->setControllerPath($controllersDir);
     }
     
     public static function log($msg){
@@ -158,6 +160,18 @@ class App {
     
     public function registerErrorHandler(ErrorHandler $errorhandler){
         $this->errorHandler = $errorhandler;
+    }
+    
+    public function registerViewEngine($name, ViewInterface $engine){
+        $this->viewEngines[strtolower($name)] = $engine;
+    }
+    
+    public function getViewEngine($registeredName){
+        $name = strtolower($registeredName);
+        if(isset($this->viewEngines[$name])){
+            return $this->viewEngines[$name];
+        }
+        return null;
     }
     
     public function setErrorPage($page){
