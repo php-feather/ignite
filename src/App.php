@@ -150,6 +150,11 @@ class App {
         $this->router->setControllerNamespace($ctrlNamespace);
         $this->router->setControllerPath($controllersDir);
     }
+    
+    public function configureRouter($routerConfig){
+        $this->router->setAutoRouting($routerConfig['autoRouting']);
+        $this->router->setRoutingFallback($routerConfig['fallbackRouting']);
+    }
      
     /**
      * Enable or Disable routing fallback requests handling
