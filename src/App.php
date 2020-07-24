@@ -138,6 +138,7 @@ class App {
             require $file;
         }
     }
+    
     /**
      * 
      * @param string $ctrlNamespace
@@ -149,6 +150,15 @@ class App {
         $this->router->setControllerNamespace($ctrlNamespace);
         $this->router->setControllerPath($controllersDir);
     }
+     
+    /**
+     * Enable or Disable routing fallback requests handling
+     * @param bool $enable
+     */
+    public function setRouterFallback($enable){
+        $this->router->setRoutingFallback($enable);
+    }
+    
     /**
      * Logs message to file
      * @param string $msg
