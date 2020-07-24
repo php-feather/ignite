@@ -102,6 +102,12 @@ class App {
     
     private static $self;
     
+    /**
+     * List of objects registered in application Container
+     * @var array
+     */
+    private static $container = [];
+    
     protected static $rootPath;
     protected static $configPath;
     protected static $logPath;
@@ -124,10 +130,14 @@ class App {
         }
         return self::$self;  
     }
-
+    
+    /**
+     * terminate application
+     */
     public function end(){
         die;
     }
+    
     /**
      * Load Require files
      * Array of absolute file paths
@@ -137,6 +147,23 @@ class App {
         foreach($files as $file){
             require $file;
         }
+    }
+    
+    /**
+     * Retrieve object registered in app container by name
+     * @param string $name Registered name of ovalue to retrieve from container
+     * @return mixed
+     */
+    public function container($name){
+        
+        if(key_exists(self::$container[$name])){
+            return self::$container[$name];
+        }
+        
+        $this->log("Requested $name not registered in application container");
+        
+        return null;
+        
     }
     
     /**
@@ -226,6 +253,16 @@ class App {
     public function cache(){
         return self::$cacheHandler;
     }
+    
+    /**
+     * Register a object in the app container
+     * @param string $name
+     * @param mixed $object
+     */
+    public function register($name,$object){
+        self::$container[$name] = $object;
+    }
+    
     /**
      * 
      * @param \Feather\Ignite\ErrorHandler $errorhandler
