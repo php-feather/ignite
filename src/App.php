@@ -157,19 +157,6 @@ class App {
         $this->loadConfigurations();
     }
     
-    protected function loadConfigurations(){
-        
-        $files = feather_dir_files(self::$configPath);
-        
-        foreach($files as $file){
-            
-            if(is_file(self::$configPath."/$file") && stripos($file,'.php') === strlen($file)-4){
-                $filename = substr($file,0,strripos($file,'.php'));
-                self::$config[strtolower($filename)] = include self::$configPath.'/'.$file;
-            }
-        }
-    }
-    
     /**
      * Retrieve object registered in app container by name
      * @param string $name Registered name of ovalue to retrieve from container
@@ -186,35 +173,20 @@ class App {
         return null;
 
     }
-    
-    /**
-     * 
-     * @param string $ctrlNamespace
-     * @param string $defaultController Name of default Controller
-     * @param string $controllersDir Adbsolute path to controllers directory
-     */
-    public function init($ctrlNamespace,$defaultController,$controllersDir){
-        $this->router->setDefaultController($defaultController);
-        $this->router->setControllerNamespace($ctrlNamespace);
-        $this->router->setControllerPath($controllersDir);
-    }
-    /**
-     * Configure Controller settings
-     * @param array $ctrlConfig
-     */
-    public function configureController($ctrlConfig){
-        $this->router->setDefaultController($ctrlConfig['default']);
-        $this->router->setControllerNamespace($ctrlConfig['namespace']);
-        $this->router->setControllerPath($ctrlConfig['baseDirectory']);
-    }
-    
+
     /**
      * Configure router
      * @param array $routerConfig
      */
     public function configureRouter($routerConfig){
+        
+        $ctrlConfig = $routerConfig['controller'];
+        
         $this->router->setAutoRouting($routerConfig['autoRouting']);
         $this->router->setRoutingFallback($routerConfig['fallbackRouting']);
+        $this->router->setDefaultController($ctrlConfig['default']);
+        $this->router->setControllerNamespace($ctrlConfig['namespace']);
+        $this->router->setControllerPath($ctrlConfig['baseDirectory']);
         
         if($routerConfig['cache']['enabled']){
             
@@ -382,17 +354,7 @@ class App {
         
         $this->errorViewEngine = $pageRenderer;
     }
-    
-    /**
-     * Enable router caching
-     */
-    public function activateRouterCache(){
-        if(self::$cacheHandler){
-            Router::getInstance()->setCacheHandler(self::$cacheHandler);
-        }
-        
-    }
-    
+
     /**
      * Load configuration from config file path
      * @param string $configPath
@@ -551,5 +513,23 @@ class App {
         }
         
     }
+    
+    /**
+     * Load application configuration files from config directory
+     * Only top level configuration files are loaded
+     */
+    protected function loadConfigurations(){
+        
+        $files = feather_dir_files(self::$configPath);
+        
+        foreach($files as $file){
+            
+            if(is_file(self::$configPath."/$file") && stripos($file,'.php') === strlen($file)-4){
+                $filename = substr($file,0,strripos($file,'.php'));
+                self::$config[strtolower($filename)] = include self::$configPath.'/'.$file;
+            }
+        }
+    }
+    
     
 }
