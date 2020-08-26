@@ -108,6 +108,12 @@ class App {
      */
     private static $container = [];
     
+    /**
+     * App Configurations
+     * @var array
+     */
+    protected static $config = [];
+    
     protected static $rootPath;
     protected static $configPath;
     protected static $logPath;
@@ -147,6 +153,21 @@ class App {
         foreach($files as $file){
             require $file;
         }
+        
+        $this->loadConfigurations();
+    }
+    
+    protected function loadConfigurations(){
+        
+        $files = feather_dir_files(self::$configPath.'/system/');
+
+        foreach($files as $file){
+            
+            if(is_file($file) && stripos($file,'.php') === strlen($file)-4){
+                $filename = substr($file,0,strripos($file,'.php'));
+                self::$config[strtolower($filename)] = include self::$configPath.'/'.$file;
+            }
+        }
     }
     
     /**
@@ -163,7 +184,7 @@ class App {
         $this->log("Requested $name not registered in application container");
         
         return null;
-        
+
     }
     
     /**
@@ -177,10 +198,40 @@ class App {
         $this->router->setControllerNamespace($ctrlNamespace);
         $this->router->setControllerPath($controllersDir);
     }
+    /**
+     * Configure Controller settings
+     * @param array $ctrlConfig
+     */
+    public function configureController($ctrlConfig){
+        $this->router->setDefaultController($ctrlConfig['default']);
+        $this->router->setControllerNamespace($ctrlConfig['namespace']);
+        $this->router->setControllerPath($ctrlConfig['baseDirectory']);
+    }
     
+    /**
+     * Configure router
+     * @param array $routerConfig
+     */
     public function configureRouter($routerConfig){
         $this->router->setAutoRouting($routerConfig['autoRouting']);
         $this->router->setRoutingFallback($routerConfig['fallbackRouting']);
+        
+        if($routerConfig['cache']['enabled']){
+            
+            $cache = $routerConfig['cache']['driver'];
+            
+            if($cache){
+                
+                $cacheConfig = self::$config['cache']['drivers'][$cache];
+                
+                $this->router->setCacheHandler(self::getCacheDriver($cacheConfig));
+                
+            }
+            else if(self::$cacheHandler){
+                $this->router->setCacheHandler(self::$cacheHandler);
+            }
+            
+        }
     }
      
     /**
@@ -365,7 +416,7 @@ class App {
      */
     public static function startSession(){
         
-        $config = include self::$configPath.'/session.php';
+        $config = self::$config['session'];
         
         if(!isset($_SESSION)){
             self::initSession($config);
@@ -401,32 +452,15 @@ class App {
      * @return void
      */
     public function setCaching(){
-        
-        
+
         if(self::$cacheHandler != null){
             return;
         }
+
+        $config = self::$config['cache'];
         
+        self::$cacheHandler = self::getCacheDriver($config);
         
-        $config = include self::$configPath.'/cache.php';
-        
-        switch($config['driver']){
-            
-            case 'file':
-            default :
-                self::$cacheHandler = \Feather\Cache\FileCache::getInstance($config['filePath']);
-                break;
-            
-            case 'database':
-                $dbConfig = $config['dbConfig'];
-                self::$cacheHandler = \Feather\Cache\DatabaseCache::getInstance($dbConfig[$dbConfig['active']]); 
-                break;
-            
-            case 'redis':
-                $redisConfig = $config['redis'];
-                self::$cacheHandler = \Feather\Cache\RedisCache::getInstance($redisConfig['host'], $redisConfig['port'], $redisConfig['scheme'],$redisConfig['connOptions']);
-                break;
-        }
     }
     
     /**
@@ -444,6 +478,61 @@ class App {
         self::$viewsPath = $views;
         self::$tempViewsPath = $tempViews;
     }
+    
+    /**
+     * 
+     * @param array $cacheConfig
+     * @return \Feather\Cache\Contracts\Cache
+     */
+    protected static function getCacheDriver($cacheConfig){
+ 
+        switch($cacheConfig['driver']){  
+            case 'file':
+            default :
+                $conf = $cacheConfig['drivers']['file'];
+                $driver = $conf['driver'];
+                return $driver::getInstance($conf['path']);
+            
+            case 'database':
+                $conf = $cacheConfig['drivers']['database'];
+                $driver = $conf['driver'];
+                $dbConfig = $conf['connections'][$conf['active']];
+                return $driver::getInstance($dbConfig); 
+            
+            case 'redis':
+                $redisConfig = $cacheConfig['drivers']['redis'];
+                $driver = $redisConfig['driver'];
+                return  $driver::getInstance($redisConfig['host'], $redisConfig['port'], $redisConfig['scheme'],$redisConfig['connOptions']);
+        }
+    }
+    
+    /**
+     * 
+     * @param array $sessionConfig
+     * @return \Feather\Session\Drivers\SessionHandlerContract|null
+     */
+    protected static function getSessionDriver($sessionConfig){
+
+        switch($sessionConfig['driver']){
+            case 'file':
+            default :
+                $conf = $sessionConfig['drivers']['file'];
+                $driver = $conf['driver'];
+                return new $driver($conf['path']);
+
+            case 'database':
+                $conf = $sessionConfig['drivers']['database'];
+                $driver = $conf['driver'];
+                $dbConfig = $conf['connections'][$conf['active']];
+                return new $driver($dbConfig);               
+            
+            case 'redis':
+                $conf = $sessionConfig['drivers']['redis'];
+                $driver = $conf['driver'];
+                return  new $driver($conf['host'], $conf['port'], $conf['scheme']);                
+        }
+    }
+    
     /**
      * 
      * @param array $config
@@ -455,30 +544,12 @@ class App {
             return;
         }
         
-        switch($config['driver']){
-            
-            case 'file':
-            default :
-                self::$sessionHandler = new \Feather\Session\Drivers\FileDriver($config['filePath']);
-                break;
-            
-            case 'database':
-                $dbConfig = $config['dbConfig'];
-                self::$sessionHandler = new \Feather\Session\Drivers\DatabaseDriver($dbConfig[$dbConfig['ative']]);               
-                break;
-            
-            case 'redis':
-                $redisConfig = $config['redis'];
-                self::$sessionHandler = new \Feather\Session\Drivers\RedisDriver($redisConfig['host'], $redisConfig['port'], $redisConfig['scheme']);                
-                break;
-        }
-        
+        self::$sessionHandler = self::getSessionDriver($config);
+
         if(self::$sessionHandler != null){
             self::$sessionHandler->activate();
         }
         
     }
-    
-    
     
 }

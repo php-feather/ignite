@@ -144,24 +144,28 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-feather/init.git",
-                "reference": "f22ff2a7634bfda48f48cf4faa4d93d2274b29ae"
+                "reference": "01537f6071c502eae207bb5db8ce4f2dcb32d282"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-feather/init/zipball/f22ff2a7634bfda48f48cf4faa4d93d2274b29ae",
-                "reference": "f22ff2a7634bfda48f48cf4faa4d93d2274b29ae",
+                "url": "https://api.github.com/repos/php-feather/init/zipball/01537f6071c502eae207bb5db8ce4f2dcb32d282",
+                "reference": "01537f6071c502eae207bb5db8ce4f2dcb32d282",
                 "shasum": ""
             },
             "require": {
                 "minime/annotations": "^3.1",
                 "php": ">=7.0",
+                "php-feather/cache": "dev-master",
                 "php-feather/session": "dev-master"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Feather\\Init\\": "src/"
-                }
+                },
+                "files": [
+                    "src/bootstrap/autoloader.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -174,7 +178,7 @@
                 }
             ],
             "description": "Feather Init - Lightweight PHP Routing Engine",
-            "time": "2020-07-03T02:37:12+00:00"
+            "time": "2020-07-24T20:20:36+00:00"
         },
         {
             "name": "php-feather/session",
@@ -219,12 +223,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-feather/view.git",
-                "reference": "247842273ba96104bcffe310b1a7b4b85f5e257c"
+                "reference": "596af3da6137bbe17f9a8d5c10842cd6b6bfbd37"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-feather/view/zipball/247842273ba96104bcffe310b1a7b4b85f5e257c",
-                "reference": "247842273ba96104bcffe310b1a7b4b85f5e257c",
+                "url": "https://api.github.com/repos/php-feather/view/zipball/596af3da6137bbe17f9a8d5c10842cd6b6bfbd37",
+                "reference": "596af3da6137bbe17f9a8d5c10842cd6b6bfbd37",
                 "shasum": ""
             },
             "require": {
@@ -248,7 +252,7 @@
                 }
             ],
             "description": "Feather View - View Engine",
-            "time": "2020-07-03T02:10:09+00:00"
+            "time": "2020-07-03T03:40:11+00:00"
         },
         {
             "name": "predis/predis",
@@ -351,12 +355,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "2edd75b8b35d62fd3eeabba73b26b8f1f60ce13d"
+                "reference": "1c302646f6efc070cd46856e600e5e0684d6b454"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/2edd75b8b35d62fd3eeabba73b26b8f1f60ce13d",
-                "reference": "2edd75b8b35d62fd3eeabba73b26b8f1f60ce13d",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/1c302646f6efc070cd46856e600e5e0684d6b454",
+                "reference": "1c302646f6efc070cd46856e600e5e0684d6b454",
                 "shasum": ""
             },
             "require": {
@@ -368,7 +372,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.17-dev"
+                    "dev-master": "1.18-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -405,7 +409,21 @@
                 "polyfill",
                 "portable"
             ],
-            "time": "2020-06-06T08:46:27+00:00"
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-07-14T12:35:20+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -413,12 +431,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "7110338d81ce1cbc3e273136e4574663627037a7"
+                "reference": "a6977d63bf9a0ad4c65cd352709e230876f9904a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/7110338d81ce1cbc3e273136e4574663627037a7",
-                "reference": "7110338d81ce1cbc3e273136e4574663627037a7",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/a6977d63bf9a0ad4c65cd352709e230876f9904a",
+                "reference": "a6977d63bf9a0ad4c65cd352709e230876f9904a",
                 "shasum": ""
             },
             "require": {
@@ -430,7 +448,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.17-dev"
+                    "dev-master": "1.18-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -468,7 +486,21 @@
                 "portable",
                 "shim"
             ],
-            "time": "2020-06-06T08:46:27+00:00"
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-07-14T12:35:20+00:00"
         },
         {
             "name": "twig/twig",
@@ -476,12 +508,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "c5ea009ef593a29bec771005a01ba42573d660c5"
+                "reference": "57ca24c5f3a079aced47dc1b8688ee5752367f15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/c5ea009ef593a29bec771005a01ba42573d660c5",
-                "reference": "c5ea009ef593a29bec771005a01ba42573d660c5",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/57ca24c5f3a079aced47dc1b8688ee5752367f15",
+                "reference": "57ca24c5f3a079aced47dc1b8688ee5752367f15",
                 "shasum": ""
             },
             "require": {
@@ -530,7 +562,29 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2020-06-22T15:25:37+00:00"
+            "funding": [
+                {
+                    "url": "https://certification.symfony.com/",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://live.symfony.com/",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://symfony.com/cloud/",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/twig/twig",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-07-06T13:35:21+00:00"
         }
     ],
     "packages-dev": [],
@@ -547,5 +601,6 @@
     "platform": {
         "php": ">=7.0"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }
