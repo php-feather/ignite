@@ -159,11 +159,11 @@ class App {
     
     protected function loadConfigurations(){
         
-        $files = feather_dir_files(self::$configPath.'/system/');
-
+        $files = feather_dir_files(self::$configPath);
+        
         foreach($files as $file){
             
-            if(is_file($file) && stripos($file,'.php') === strlen($file)-4){
+            if(is_file(self::$configPath."/$file") && stripos($file,'.php') === strlen($file)-4){
                 $filename = substr($file,0,strripos($file,'.php'));
                 self::$config[strtolower($filename)] = include self::$configPath.'/'.$file;
             }
