@@ -138,10 +138,11 @@ class App {
     }
     
     /**
-     * terminate application
+     * 
+     * @return string
      */
-    public function end(){
-        die;
+    public function basePath(){
+        return self::$rootPath;
     }
     
     /**
@@ -158,22 +159,21 @@ class App {
     }
     
     /**
-     * Retrieve object registered in app container by name
-     * @param string $name Registered name of ovalue to retrieve from container
-     * @return mixed
+     * 
+     * @return \Feather\Cache\Contracts\Cache |null
      */
-    public function container($name){
-        
-        if(key_exists(self::$container[$name])){
-            return self::$container[$name];
-        }
-        
-        $this->log("Requested $name not registered in application container");
-        
-        return null;
-
+    public function cache(){
+        return self::$cacheHandler;
     }
-
+    
+    /**
+     * 
+     * @return string
+     */
+    public function configPath(){
+        return self::$configPath;
+    }
+    
     /**
      * Configure router
      * @param array $routerConfig
@@ -205,33 +205,39 @@ class App {
             
         }
     }
-     
-    /**
-     * Enable or Disable routing fallback requests handling
-     * @param bool $enable
-     */
-    public function setRouterFallback($enable){
-        $this->router->setRoutingFallback($enable);
-    }
     
     /**
-     * Logs message to file
-     * @param string $msg
+     * Retrieve object registered in app container by name
+     * @param string $name Registered name of ovalue to retrieve from container
+     * @return mixed
      */
-    public static function log($msg){
-        $filePath = self::$logPath.'/app_log';
-        error_log(date('Y-m-d H:i:s').' - '.$msg,3,$filePath);
-    }
-    
-    public function run(){
+    public function container($name){
+        
+        if(key_exists(self::$container[$name])){
+            return self::$container[$name];
+        }
+        
+        $this->log("Requested $name not registered in application container");
+        
+        return null;
 
-        try{
-            return $this->router->processRequest($this->request->uri,$this->request->method);
-        }
-        catch (\Exception $e){
-            return $this->errorResponse($e->getMessage(),$e->getCode());
-        }
     }
+
+    /**
+     * terminate application
+     */
+    public function end(){
+        die;
+    }
+    
+    /**
+     * Get instance of App error Handler
+     * @return \Feather\Ignite\ErrorHandler $errorhandler | null
+     */
+    public function errorHandler(){
+        return self::$errorHandler;
+    }
+    
     /**
      * 
      * @param string $msg
@@ -263,18 +269,34 @@ class App {
     }
     
     /**
-     * Get instance of App error Handler
-     * @return \Feather\Ignite\ErrorHandler $errorhandler | null
-     */
-    public function errorHandler(){
-        return self::$errorHandler;
-    }
-    /**
      * 
-     * @return \Feather\Cache\Contracts\Cache |null
+     * @param string $registeredName
+     * @return \Feather\View\ViewInterface | null
      */
-    public function cache(){
-        return self::$cacheHandler;
+    public function getViewEngine($registeredName){
+        $name = strtolower($registeredName);
+        if(isset($this->viewEngines[$name])){
+            return $this->viewEngines[$name];
+        }
+        return null;
+    }
+    
+    /**
+     * Load file or list of files
+     * @param string|array $file
+     */
+    public function load($file){
+        
+        if(is_array($file)){
+            
+            foreach($file as $f){
+                require_once $f;
+            }
+        }
+        else{
+            require_once $file;
+        }
+        
     }
     
     /**
@@ -304,40 +326,6 @@ class App {
     }
     
     /**
-     * 
-     * @param string $registeredName
-     * @return \Feather\View\ViewInterface | null
-     */
-    public function getViewEngine($registeredName){
-        $name = strtolower($registeredName);
-        if(isset($this->viewEngines[$name])){
-            return $this->viewEngines[$name];
-        }
-        return null;
-    }
-    /**
-     * 
-     * @return string
-     */
-    public function basePath(){
-        return self::$rootPath;
-    }
-    /**
-     * 
-     * @return string
-     */
-    public function configPath(){
-        return self::$configPath;
-    }
-    /**
-     * 
-     * @return string
-     */
-    public function viewsPath(){
-        return self::$viewsPath;
-    }
-    
-    /**
      * Sets page to display errors on and render engine to use when rendering page
      * @param string $page 
      * @param string $pageRenderer Registered name of view Engine
@@ -354,7 +342,23 @@ class App {
         
         $this->errorViewEngine = $pageRenderer;
     }
-
+     
+    /**
+     * Enable or Disable routing fallback requests handling
+     * @param bool $enable
+     */
+    public function setRouterFallback($enable){
+        $this->router->setRoutingFallback($enable);
+    }
+    
+    /**
+     * 
+     * @return string
+     */
+    public function viewsPath(){
+        return self::$viewsPath;
+    }
+    
     /**
      * Load configuration from config file path
      * @param string $configPath
@@ -373,23 +377,22 @@ class App {
     }
     
     /**
-     * Starts session
-     * @returns void
+     * Logs message to file
+     * @param string $msg
      */
-    public static function startSession(){
-        
-        $config = self::$config['session'];
-        
-        if(!isset($_SESSION)){
-            self::initSession($config);
-            session_set_cookie_params($config['lifetime'], '/');
-            session_name('fi_session');
-            session_start();
+    public static function log($msg){
+        $filePath = self::$logPath.'/app_log';
+        error_log(date('Y-m-d H:i:s').' - '.$msg,3,$filePath);
+    }
+    
+    public function run(){
+
+        try{
+            return $this->router->processRequest($this->request->uri,$this->request->method);
         }
-        else{
-            setcookie(session_name('fi_session'),session_id(),time()+$config['lifetime']);
+        catch (\Exception $e){
+            return $this->errorResponse($e->getMessage(),$e->getCode());
         }
-        
     }
     
     /**
@@ -439,6 +442,26 @@ class App {
         self::$logPath = $log;
         self::$viewsPath = $views;
         self::$tempViewsPath = $tempViews;
+    }
+    
+    /**
+     * Starts session
+     * @returns void
+     */
+    public static function startSession(){
+        
+        $config = self::$config['session'];
+        
+        if(!isset($_SESSION)){
+            self::initSession($config);
+            session_set_cookie_params($config['lifetime'], '/');
+            session_name('fi_session');
+            session_start();
+        }
+        else{
+            setcookie(session_name('fi_session'),session_id(),time()+$config['lifetime']);
+        }
+        
     }
     
     /**
