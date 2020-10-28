@@ -193,11 +193,7 @@ class App {
             $cache = $routerConfig['cache']['driver'];
             
             if($cache){
-                
-                $cacheConfig = self::$config['cache']['drivers'][$cache];
-                
-                $this->router->setCacheHandler(self::getCacheDriver($cacheConfig));
-                
+                $this->router->setCacheHandler(self::getCache($cache));    
             }
             else if(self::$cacheHandler){
                 $this->router->setCacheHandler(self::$cacheHandler);
@@ -357,6 +353,35 @@ class App {
      */
     public function viewsPath(){
         return self::$viewsPath;
+    }
+    
+    /**
+     * 
+     * @param string $driver
+     * @return \Feather\Cache\Contracts\Cache
+     */
+    public static function getCache($driver){
+        
+        $cacheConfig = self::$config['cache'];
+        
+        switch($driver){  
+            case 'file':
+            default :
+                $conf = $cacheConfig['drivers']['file'];
+                $driver = $conf['driver'];
+                return $driver::getInstance($conf['path']);
+            
+            case 'database':
+                $conf = $cacheConfig['drivers']['database'];
+                $driver = $conf['driver'];
+                $dbConfig = $conf['connections'][$conf['active']];
+                return $driver::getInstance($dbConfig); 
+            
+            case 'redis':
+                $redisConfig = $cacheConfig['drivers']['redis'];
+                $driver = $redisConfig['driver'];
+                return  $driver::getInstance($redisConfig['host'], $redisConfig['port'], $redisConfig['scheme'],$redisConfig['connOptions']);
+        }
     }
     
     /**
