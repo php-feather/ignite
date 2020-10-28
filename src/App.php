@@ -193,9 +193,13 @@ class App {
             $cache = $routerConfig['cache']['driver'];
             
             if($cache){
-                $this->router->setCacheHandler(self::getCache($cache));    
-            }
-            else if(self::$cacheHandler){
+                
+                if($cache instanceof Cache){
+                    $this->router->setCacheHandler($cache);
+                } else {
+                    $this->router->setCacheHandler(self::getCache($cache));
+                }
+            } elseif (self::$cacheHandler){
                 $this->router->setCacheHandler(self::$cacheHandler);
             }
             
