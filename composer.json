@@ -1,6 +1,6 @@
 {
     "name": "php-feather/ignite",
-    "description": "Feather Ignite - PHP Feather Framework Engine",
+    "description": "Feather Ignite - PHP Feather Kernel",
     "license": "MIT",
 
     "authors": [
