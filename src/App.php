@@ -8,7 +8,7 @@ use Feather\View\ViewInterface;
  *
  * @author fcarbah
  */
-use Feather\Init\Http\Router;
+use Feather\Init\Http\Router\Router;
 use Feather\Init\Http\Request;
 use Feather\Init\Http\Response;
 use Feather\Session\Drivers\SessionHandlerContract;

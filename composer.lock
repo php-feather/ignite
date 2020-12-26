@@ -144,18 +144,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-feather/init.git",
-                "reference": "59ae5c40240c781fccab4b72a0b953fe81d068ed"
+                "reference": "df97ac2228a4a3d5b0d672b6d2ab6dc806eec93f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-feather/init/zipball/59ae5c40240c781fccab4b72a0b953fe81d068ed",
-                "reference": "59ae5c40240c781fccab4b72a0b953fe81d068ed",
+                "url": "https://api.github.com/repos/php-feather/init/zipball/df97ac2228a4a3d5b0d672b6d2ab6dc806eec93f",
+                "reference": "df97ac2228a4a3d5b0d672b6d2ab6dc806eec93f",
                 "shasum": ""
             },
             "require": {
                 "minime/annotations": "^3.1",
                 "php": ">=7.0",
                 "php-feather/cache": "dev-master",
+                "php-feather/security": "dev-master",
                 "php-feather/session": "dev-master"
             },
             "type": "library",
@@ -178,7 +179,47 @@
                 }
             ],
             "description": "Feather Init - Lightweight PHP Routing Engine",
-            "time": "2020-10-25T03:08:40+00:00"
+            "time": "2020-12-26T20:24:32+00:00"
+        },
+        {
+            "name": "php-feather/security",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-feather/security.git",
+                "reference": "bff18d7c87a2a5740a9764ae257a3d9d5a3079c2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-feather/security/zipball/bff18d7c87a2a5740a9764ae257a3d9d5a3079c2",
+                "reference": "bff18d7c87a2a5740a9764ae257a3d9d5a3079c2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0",
+                "php-feather/session": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Feather\\Security\\": "src/"
+                },
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Francis Carbah",
+                    "email": "afrounit@hotmail.com.com"
+                }
+            ],
+            "description": "Feather Security",
+            "time": "2020-12-26T20:57:41+00:00"
         },
         {
             "name": "php-feather/session",
