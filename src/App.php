@@ -129,10 +129,10 @@ final class App
      */
     public static function getInstance()
     {
-        if (self::$self == NULL) {
-            self::$self = new App();
+        if (static::$self == NULL) {
+            static::$self = new App();
         }
-        return self::$self;
+        return static::$self;
     }
 
     /**
@@ -141,7 +141,7 @@ final class App
      */
     public function basePath()
     {
-        return self::$rootPath;
+        return static::$rootPath;
     }
 
     /**
@@ -164,7 +164,7 @@ final class App
      */
     public function cache()
     {
-        return self::$cacheHandler;
+        return static::$cacheHandler;
     }
 
     /**
@@ -173,7 +173,7 @@ final class App
      */
     public function configPath()
     {
-        return self::$configPath;
+        return static::$configPath;
     }
 
     /**
@@ -200,10 +200,10 @@ final class App
                 if ($cache instanceof Cache) {
                     $this->router->setCacheHandler($cache);
                 } else {
-                    $this->router->setCacheHandler(self::getCache($cache));
+                    $this->router->setCacheHandler(static::getCache($cache));
                 }
-            } elseif (self::$cacheHandler) {
-                $this->router->setCacheHandler(self::$cacheHandler);
+            } elseif (static::$cacheHandler) {
+                $this->router->setCacheHandler(static::$cacheHandler);
             }
         }
     }
@@ -216,8 +216,8 @@ final class App
     public function container($name)
     {
 
-        if (key_exists(self::$container[$name])) {
-            return self::$container[$name];
+        if (key_exists(static::$container[$name])) {
+            return static::$container[$name];
         }
 
         $this->log("Requested $name not registered in application container");
@@ -239,7 +239,7 @@ final class App
      */
     public function errorHandler()
     {
-        return self::$errorHandler;
+        return static::$errorHandler;
     }
 
     /**
@@ -306,7 +306,7 @@ final class App
      */
     public function register($name, $object)
     {
-        self::$container[$name] = $object;
+        static::$container[$name] = $object;
     }
 
     /**
@@ -340,7 +340,7 @@ final class App
             $page = '/' . $page;
         }
 
-        if (file_exists(self::$viewsPath . $page)) {
+        if (file_exists(static::$viewsPath . $page)) {
             $this->errorPage = $page;
         }
 
@@ -362,7 +362,7 @@ final class App
      */
     public function viewsPath()
     {
-        return self::$viewsPath;
+        return static::$viewsPath;
     }
 
     /**
@@ -373,7 +373,7 @@ final class App
     public static function getCache($driver)
     {
 
-        $cacheConfig = self::$config['cache'];
+        $cacheConfig = static::$config['cache'];
 
         switch ($driver) {
             case 'file':
@@ -404,10 +404,10 @@ final class App
     {
         try {
             $fullPath = stripos($configPath, '/') === 0 ? $configPath : '/' . $configPath;
-            $config = include self::$configPath . $fullPath;
+            $config = include static::$configPath . $fullPath;
             return $config;
         } catch (\Exception $e) {
-            self::log($e->getMessage());
+            static::log($e->getMessage());
             return null;
         }
     }
@@ -418,7 +418,7 @@ final class App
      */
     public static function log($msg)
     {
-        $filePath = self::$logPath . '/app_log';
+        $filePath = static::$logPath . '/app_log';
         error_log(date('Y-m-d H:i:s') . ' - ' . $msg, 3, $filePath);
     }
 
@@ -438,7 +438,7 @@ final class App
      */
     public static function registerCacheHandler(Cache $cacheHandler)
     {
-        self::$cacheHandler = $cacheHandler;
+        static::$cacheHandler = $cacheHandler;
     }
 
     /**
@@ -447,8 +447,8 @@ final class App
      */
     public static function registerSessionHandler(SessionHandlerContract $sessionHandler)
     {
-        self::$sessionHandler = $sessionHandler;
-        self::$sessionHandler->activate();
+        static::$sessionHandler = $sessionHandler;
+        static::$sessionHandler->activate();
     }
 
     /**
@@ -458,13 +458,13 @@ final class App
     public function setCaching()
     {
 
-        if (self::$cacheHandler != null) {
+        if (static::$cacheHandler != null) {
             return;
         }
 
-        $config = self::$config['cache'];
+        $config = static::$config['cache'];
 
-        self::$cacheHandler = self::getCacheDriver($config);
+        static::$cacheHandler = static::getCacheDriver($config);
     }
 
     /**
@@ -477,11 +477,11 @@ final class App
      */
     public static function setBasePaths($root, $config, $log, $views, $tempViews = '')
     {
-        self::$rootPath = $root;
-        self::$configPath = $config;
-        self::$logPath = $log;
-        self::$viewsPath = $views;
-        self::$tempViewsPath = $tempViews;
+        static::$rootPath = $root;
+        static::$configPath = $config;
+        static::$logPath = $log;
+        static::$viewsPath = $views;
+        static::$tempViewsPath = $tempViews;
     }
 
     /**
@@ -491,15 +491,15 @@ final class App
     public static function startSession()
     {
 
-        $config = self::$config['session'];
+        $config = static::$config['session'];
         $options = [
             'cookie_lifetime' => $config['lifetime'],
             'cookie_path' => '/',
             'name' => 'fs_session'
         ];
 
-        self::initSession($config);
-        self::$sessionHandler->start($options);
+        static::initSession($config);
+        static::$sessionHandler->start($options);
     }
 
     /**
@@ -567,14 +567,14 @@ final class App
     protected static function initSession($config)
     {
 
-        if (self::$sessionHandler != null) {
+        if (static::$sessionHandler != null) {
             return;
         }
 
-        self::$sessionHandler = self::getSessionDriver($config);
+        static::$sessionHandler = static::getSessionDriver($config);
 
-        if (self::$sessionHandler != null) {
-            self::$sessionHandler->activate();
+        if (static::$sessionHandler != null) {
+            static::$sessionHandler->activate();
         } else {
             throw new \RuntimeException('Session Driver not configured');
         }
@@ -587,13 +587,13 @@ final class App
     protected function loadConfigurations()
     {
 
-        $files = feather_dir_files(self::$configPath);
+        $files = feather_dir_files(static::$configPath);
 
         foreach ($files as $file) {
 
-            if (is_file(self::$configPath . "/$file") && stripos($file, '.php') === strlen($file) - 4) {
+            if (is_file(static::$configPath . "/$file") && stripos($file, '.php') === strlen($file) - 4) {
                 $filename = substr($file, 0, strripos($file, '.php'));
-                self::$config[strtolower($filename)] = include self::$configPath . '/' . $file;
+                static::$config[strtolower($filename)] = include static::$configPath . '/' . $file;
             }
         }
     }
