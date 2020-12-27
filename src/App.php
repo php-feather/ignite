@@ -413,6 +413,17 @@ final class App
     }
 
     /**
+     *
+     * @param string|array $paths Directory path(s) that contain the .env file
+     * @param string|array $envFiles Env files to load. ENV files that are not name .env
+     */
+    public static function loadEnv($paths, $envFiles = null)
+    {
+        $dotenv = \Dotenv\Dotenv::createImmutable($paths, $names);
+        $dotenv->load();
+    }
+
+    /**
      * Logs message to file
      * @param string $msg
      */

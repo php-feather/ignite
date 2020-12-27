@@ -9,13 +9,15 @@
             "email": "afrounit@hotmail.com"
         }
     ],
+    "prefer-stable": true,
     "minimum-stability": "dev",
     "require": {
         "php": ">=7.0",
         "php-feather/init": "dev-master",
         "php-feather/cache": "dev-master",
         "php-feather/session": "dev-master",
-        "php-feather/view": "dev-master"
+        "php-feather/view": "dev-master",
+        "vlucas/phpdotenv": "5.*"
     },
     "autoload": {
         "psr-4": {
