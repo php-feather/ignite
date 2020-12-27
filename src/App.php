@@ -416,10 +416,12 @@ final class App
      *
      * @param string|array $path Directory path(s) that contain the .env file
      * @param string|array $envFilename Env files to load. ENV files that are not name .env
+     * @param array|string $requiredVariables ENV variables that are required
      */
-    public static function loadEnv($path, $envFilename = null)
+    public static function loadEnv($path, $envFilename = null, $requiredVariables = array())
     {
-        $dotenv = \Dotenv\Dotenv::createImmutable($path, $envFilename);
+        $dotenv = \Dotenv\Dotenv::createUnsafeImmutable($path, $envFilename);
+        $dotenv->required($requiredVariables);
         $dotenv->load();
     }
 
