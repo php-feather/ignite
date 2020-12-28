@@ -514,12 +514,15 @@ final class App
     {
 
         $config = static::$config['session'];
-        $options = [
+        $defaultOptions = [
             'cookie_lifetime' => $config['lifetime'],
             'gc_max_lifetime' => $config['lifetime'],
             'cookie_path' => '/',
-            'name' => 'fs_session',
+            'name' => 'FA_SESSION',
         ];
+        $configOptions = $config['options'];
+
+        $options = array_merge($defaultOptions, $configOptions);
 
         static::initSession($config);
         static::$sessionHandler->start($options);
