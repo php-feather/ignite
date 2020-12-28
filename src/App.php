@@ -421,8 +421,8 @@ final class App
     public static function loadEnv($path, $envFilename = null, $requiredVariables = array())
     {
         $dotenv = \Dotenv\Dotenv::createUnsafeImmutable($path, $envFilename);
-        $dotenv->required($requiredVariables);
         $dotenv->load();
+        $dotenv->required($requiredVariables);
     }
 
     /**
