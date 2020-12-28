@@ -118,6 +118,15 @@ final class App
 
     private function __construct()
     {
+
+    }
+
+    /**
+     * Initialize Application
+     * request response and router
+     */
+    public function initialize()
+    {
         $this->request = Request::getInstance();
         $this->response = Response::getInstance();
         $this->router = Router::getInstance();
@@ -507,8 +516,9 @@ final class App
         $config = static::$config['session'];
         $options = [
             'cookie_lifetime' => $config['lifetime'],
+            'gc_max_lifetime' => $config['lifetime'],
             'cookie_path' => '/',
-            'name' => 'fs_session'
+            'name' => 'fs_session',
         ];
 
         static::initSession($config);
