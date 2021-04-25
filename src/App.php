@@ -189,38 +189,6 @@ final class App
     }
 
     /**
-     * Configure router
-     * @param array $routerConfig
-     */
-    public function configureRouter($routerConfig)
-    {
-
-        $ctrlConfig = $routerConfig['controller'];
-
-        $this->router->setAutoRouting($routerConfig['autoRouting']);
-        $this->router->setRoutingFallback($routerConfig['fallbackRouting']);
-        $this->router->setDefaultController($ctrlConfig['default']);
-        $this->router->setControllerNamespace($ctrlConfig['namespace']);
-        $this->router->setControllerPath($ctrlConfig['baseDirectory']);
-
-        if ($routerConfig['cache']['enabled']) {
-
-            $cache = $routerConfig['cache']['driver'];
-
-            if ($cache) {
-
-                if ($cache instanceof Cache) {
-                    $this->router->setCacheHandler($cache);
-                } else {
-                    $this->router->setCacheHandler(static::getCache($cache));
-                }
-            } elseif (static::$cacheHandler) {
-                $this->router->setCacheHandler(static::$cacheHandler);
-            }
-        }
-    }
-
-    /**
      * Retrieve object registered in app container by name
      * @param string $name Registered name of ovalue to retrieve from container
      * @return mixed
@@ -292,6 +260,40 @@ final class App
             return $this->viewEngines[$name];
         }
         return null;
+    }
+
+    /**
+     * Configure router
+     * @param array $routerConfig
+     */
+    public function initRouter($routerConfig)
+    {
+
+        $ctrlConfig = $routerConfig['controller'];
+
+        $this->router->setAutoRouting($routerConfig['autoRouting']);
+        $this->router->setRoutingFallback($routerConfig['fallbackRouting']);
+        $this->router->setDefaultController($ctrlConfig['default']);
+        $this->router->setControllerNamespace($ctrlConfig['namespace']);
+        $this->router->setControllerPath($ctrlConfig['baseDirectory']);
+
+        if ($routerConfig['cache']['enabled']) {
+
+            $cache = $routerConfig['cache']['driver'];
+
+            if ($cache) {
+
+                if ($cache instanceof ICache) {
+                    $this->router->setCacheHandler($cache);
+                } else {
+                    $this->router->setCacheHandler(static::getCache($cache));
+                }
+            } elseif (static::$cacheHandler) {
+                $this->router->setCacheHandler(static::$cacheHandler);
+            }
+        }
+        //load registered routes
+        $this->load($routerConfig['registeredRoutes']);
     }
 
     /**
