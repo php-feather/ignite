@@ -71,7 +71,7 @@ register_shutdown_function(function() {
 });
 
 //Register error handler
-set_error_handler('defaultErrorHandler');
+set_error_handler('Feather\Ignite\defaultErrorHandler');
 
 /**
  * Description of App
