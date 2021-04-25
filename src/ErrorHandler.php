@@ -5,7 +5,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 namespace Feather\Ignite;
 
 /**
@@ -13,14 +12,16 @@ namespace Feather\Ignite;
  *
  * @author fcarbah
  */
-interface ErrorHandler {
+interface ErrorHandler
+{
+
     /**
-     * 
+     *
      * @param string|int $errorCode
      * @param string $errorMessage
      * @param string $filename
      * @param int $lineNumber
+     * @param array $errorContext
      */
-    public function handle($errorCode,$errorMessage,$filename,$lineNumber);
-    
+    public function handle($errorCode, $errorMessage, $filename, $lineNumber, $errorContext = array());
 }

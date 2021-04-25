@@ -2,7 +2,7 @@
 
 namespace Feather\Ignite;
 
-use Feather\View\ViewInterface;
+use Feather\View\IView;
 /**
  * Description of App
  *
@@ -11,8 +11,8 @@ use Feather\View\ViewInterface;
 use Feather\Init\Http\Router\Router;
 use Feather\Init\Http\Request;
 use Feather\Init\Http\Response;
-use Feather\Session\Drivers\SessionHandlerContract;
-use Feather\Cache\Contracts\Cache;
+use Feather\Cache\ICache;
+use Feather\Session\Drivers\ISessionHandler;
 
 /**
  * Handles errors thrown by application
@@ -22,7 +22,7 @@ use Feather\Cache\Contracts\Cache;
  * @param int $line
  * @return void
  */
-function defaultErrorHandler($code, $message, $file, $line)
+function defaultErrorHandler($code, $message, $file, $line, $errorContext = array())
 {
 
     $msg = "ERR CODE: $code\nMESSAGE:$message\nFILE:$file || $line";
@@ -70,6 +70,9 @@ register_shutdown_function(function() {
     fatalErrorHandler();
 });
 
+//Register error handler
+set_error_handler('defaultErrorHandler');
+
 /**
  * Description of App
  *
@@ -92,10 +95,10 @@ final class App
     /** @var \Feather\Ignite\ErrorHandler * */
     protected static $errorHandler;
 
-    /** @var \Feather\Cache\Contracts\Cache * */
+    /** @var \Feather\Cache\ICache * */
     protected static $cacheHandler;
 
-    /** @var \Feather\Session\Drivers\SessionHandlerContract * */
+    /** @var \Feather\Session\Drivers\ISessionHandler * */
     protected static $sessionHandler;
     private static $self;
 
@@ -169,7 +172,7 @@ final class App
 
     /**
      *
-     * @return \Feather\Cache\Contracts\Cache |null
+     * @return \Feather\Cache\ICache|null
      */
     public function cache()
     {
@@ -280,7 +283,7 @@ final class App
     /**
      *
      * @param string $registeredName
-     * @return \Feather\View\ViewInterface | null
+     * @return \Feather\View\IView| null
      */
     public function getViewEngine($registeredName)
     {
@@ -330,9 +333,9 @@ final class App
     /**
      *
      * @param string $name
-     * @param ViewInterface $engine
+     * @param IView $engine
      */
-    public function registerViewEngine($name, ViewInterface $engine)
+    public function registerViewEngine($name, IView $engine)
     {
         $this->viewEngines[strtolower($name)] = $engine;
     }
@@ -377,7 +380,7 @@ final class App
     /**
      *
      * @param string $driver
-     * @return \Feather\Cache\Contracts\Cache
+     * @return \Feather\Cache\ICache
      */
     public static function getCache($driver)
     {
@@ -456,7 +459,7 @@ final class App
 
     /**
      *
-     * @param \Feather\Cache\Contracts\Cache $cacheHandler
+     * @param \Feather\Cache\ICache $cacheHandler
      */
     public static function registerCacheHandler(Cache $cacheHandler)
     {
@@ -465,9 +468,9 @@ final class App
 
     /**
      *
-     * @param \Feather\Session\Drivers\SessionHandlerContract $sessionHandler
+     * @param \Feather\Session\Drivers\ISessionHandler $sessionHandler
      */
-    public static function registerSessionHandler(SessionHandlerContract $sessionHandler)
+    public static function registerSessionHandler(ISessionHandler $sessionHandler)
     {
         static::$sessionHandler = $sessionHandler;
         static::$sessionHandler->activate();
@@ -531,7 +534,7 @@ final class App
     /**
      *
      * @param array $cacheConfig
-     * @return \Feather\Cache\Contracts\Cache
+     * @return \Feather\Cache\ICache
      */
     protected static function getCacheDriver($cacheConfig)
     {
@@ -559,7 +562,7 @@ final class App
     /**
      *
      * @param array $sessionConfig
-     * @return \Feather\Session\Drivers\SessionHandlerContract|null
+     * @return \Feather\Session\Drivers\ISessionHandler|null
      */
     protected static function getSessionDriver($sessionConfig)
     {
