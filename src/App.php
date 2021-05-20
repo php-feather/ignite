@@ -232,9 +232,9 @@ final class App
      */
     public function errorResponse($msg = '', $code = 400, $file = '', $line = null)
     {
-
-        ob_clean();
-
+        if (ob_get_level() > 0) {
+            ob_clean();
+        }
 
         if ($this->request->isAjax) {
             $this->response->renderJson($msg, [], $code);

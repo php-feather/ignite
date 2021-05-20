@@ -230,12 +230,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-feather/init.git",
-                "reference": "2e7675ddd04e461c39d701ccd5f93343a68ca9b2"
+                "reference": "ccc1c316ac6d4662f30908180194ca15c05ac49e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-feather/init/zipball/2e7675ddd04e461c39d701ccd5f93343a68ca9b2",
-                "reference": "2e7675ddd04e461c39d701ccd5f93343a68ca9b2",
+                "url": "https://api.github.com/repos/php-feather/init/zipball/ccc1c316ac6d4662f30908180194ca15c05ac49e",
+                "reference": "ccc1c316ac6d4662f30908180194ca15c05ac49e",
                 "shasum": ""
             },
             "require": {
@@ -270,7 +270,7 @@
                 "issues": "https://github.com/php-feather/init/issues",
                 "source": "https://github.com/php-feather/init/tree/master"
             },
-            "time": "2021-04-25T18:43:21+00:00"
+            "time": "2021-05-20T01:18:30+00:00"
         },
         {
             "name": "php-feather/security",
@@ -365,12 +365,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-feather/view.git",
-                "reference": "703343457062c8881a9cfad097ead6dba0e7be5b"
+                "reference": "738cc61c929d62aca427302320cb002833c895bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-feather/view/zipball/703343457062c8881a9cfad097ead6dba0e7be5b",
-                "reference": "703343457062c8881a9cfad097ead6dba0e7be5b",
+                "url": "https://api.github.com/repos/php-feather/view/zipball/738cc61c929d62aca427302320cb002833c895bb",
+                "reference": "738cc61c929d62aca427302320cb002833c895bb",
                 "shasum": ""
             },
             "require": {
@@ -399,7 +399,7 @@
                 "issues": "https://github.com/php-feather/view/issues",
                 "source": "https://github.com/php-feather/view/tree/master"
             },
-            "time": "2021-04-25T19:39:10+00:00"
+            "time": "2021-05-09T15:36:44+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -829,16 +829,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v3.3.0",
+            "version": "v3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "1f3b7e2c06cc05d42936a8ad508ff1db7975cdc5"
+                "reference": "21578f00e83d4a82ecfa3d50752b609f13de6790"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/1f3b7e2c06cc05d42936a8ad508ff1db7975cdc5",
-                "reference": "1f3b7e2c06cc05d42936a8ad508ff1db7975cdc5",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/21578f00e83d4a82ecfa3d50752b609f13de6790",
+                "reference": "21578f00e83d4a82ecfa3d50752b609f13de6790",
                 "shasum": ""
             },
             "require": {
@@ -889,7 +889,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twigphp/Twig/issues",
-                "source": "https://github.com/twigphp/Twig/tree/v3.3.0"
+                "source": "https://github.com/twigphp/Twig/tree/v3.3.2"
             },
             "funding": [
                 {
@@ -901,7 +901,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-02-08T09:54:36+00:00"
+            "time": "2021-05-16T12:14:13+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
