@@ -13,6 +13,7 @@ use Feather\Init\Http\Request;
 use Feather\Init\Http\Response;
 use Feather\Cache\ICache;
 use Feather\Session\Drivers\ISessionHandler;
+use Feather\Ignite\Container\AppContainer;
 
 /**
  * Handles errors thrown by application
@@ -29,11 +30,11 @@ function defaultErrorHandler($code, $message, $file, $line, $errorContext = arra
 
     $app = App::getInstance();
 
+    $app->log($msg);
+
     if ($app->errorHandler()) {
         return $app->errorHandler()->handle($code, $message, $file, $line);
     }
-
-    $app->log($msg);
 
     if (preg_match('/(.*?)Controllers(.*?)\'\snot\sfound/i', $message)) {
         return $app->errorResponse('Page Not Found', 404);
@@ -104,7 +105,7 @@ final class App
 
     /**
      * List of objects registered in application Container
-     * @var array
+     * @var Feather\Ignite\Container\AppContainer
      */
     private static $container = [];
 
@@ -190,17 +191,17 @@ final class App
 
     /**
      * Retrieve object registered in app container by name
-     * @param string $name Registered name of ovalue to retrieve from container
+     * @param string $key key data to retrieve
      * @return mixed
      */
-    public function container($name)
+    public function container($key)
     {
 
-        if (key_exists(static::$container[$name])) {
-            return static::$container[$name];
+        if (self::$container->hasKey($key)) {
+            return static::$container->get($name);
         }
 
-        $this->log("Requested $name not registered in application container");
+        $this->log("Key: $key - not registered in application container");
 
         return null;
     }
@@ -255,7 +256,7 @@ final class App
      */
     public function getViewEngine($registeredName)
     {
-        $name = strtolower($registeredName);
+        $name = $registeredName;
         if (isset($this->viewEngines[$name])) {
             return $this->viewEngines[$name];
         }
@@ -339,7 +340,7 @@ final class App
      */
     public function registerViewEngine($name, IView $engine)
     {
-        $this->viewEngines[strtolower($name)] = $engine;
+        $this->viewEngines[$name] = $engine;
     }
 
     /**
