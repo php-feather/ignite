@@ -198,8 +198,8 @@ final class App
     public function container($key)
     {
 
-        if (self::$container->hasKey($key)) {
-            return static::$container->get($name);
+        if ($this->container->hasKey($key)) {
+            return $this->container->get($key);
         }
 
         $this->log("Key: $key - not registered in application container");
@@ -317,12 +317,12 @@ final class App
 
     /**
      * Register a object in the app container
-     * @param string $name
+     * @param string $key
      * @param mixed $object
      */
-    public function register($name, $object)
+    public function register($key, $object)
     {
-        static::$container[$name] = $object;
+        $this->container->add($key, $object);
     }
 
     /**
