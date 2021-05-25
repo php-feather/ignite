@@ -107,7 +107,7 @@ final class App
      * List of objects registered in application Container
      * @var Feather\Ignite\Container\AppContainer
      */
-    private static $container = [];
+    protected $container = [];
 
     /**
      * App Configurations
@@ -134,6 +134,7 @@ final class App
         $this->request = Request::getInstance();
         $this->response = Response::getInstance();
         $this->router = Router::getInstance();
+        $this->container = AppContainer::getInstance();
     }
 
     /**
