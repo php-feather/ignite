@@ -8,7 +8,7 @@ use Feather\View\IView;
  *
  * @author fcarbah
  */
-use Feather\Init\Http\Router\Router;
+use Feather\Init\Http\Routing\Router;
 use Feather\Init\Http\Request;
 use Feather\Init\Http\Response;
 use Feather\Cache\ICache;
@@ -82,10 +82,19 @@ set_error_handler('Feather\Ignite\defaultErrorHandler');
 final class App
 {
 
+    /** @var string * */
     protected $controller;
+
+    /** @var string * */
     protected $defaultController = 'Index';
+
+    /** @var \Feather\Init\Http\Response * */
     protected $response;
+
+    /** @var \Feather\Init\Http\Request * */
     protected $request;
+
+    /** @var \Feather\Init\Http\Routing\Router * */
     protected $router;
     protected $errorPage;
     protected $errorViewEngine = 'native';
@@ -101,6 +110,8 @@ final class App
 
     /** @var \Feather\Session\Drivers\ISessionHandler * */
     protected static $sessionHandler;
+
+    /** @var \Feather\Ignite\App * */
     private static $self;
 
     /**
@@ -114,10 +125,20 @@ final class App
      * @var array
      */
     protected static $config = [];
+
+    /** @var string * */
     protected static $rootPath;
+
+    /** @var string * */
     protected static $configPath;
+
+    /** @var string * */
     protected static $logPath;
+
+    /** @var string * */
     protected static $viewsPath;
+
+    /** @var string * */
     protected static $tempViewsPath;
 
     private function __construct()
@@ -274,6 +295,7 @@ final class App
         $ctrlConfig = $routerConfig['controller'];
 
         $this->router->setAutoRouting($routerConfig['autoRouting']);
+        $this->router->setFolderRouting($routerConfig['folderRouting'] ?? true, $routerConfig['folderRoutingPath'] ?? static::$rootPath . '/public/');
         $this->router->setRoutingFallback($routerConfig['fallbackRouting']);
         $this->router->setDefaultController($ctrlConfig['default']);
         $this->router->setControllerNamespace($ctrlConfig['namespace']);
