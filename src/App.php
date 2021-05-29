@@ -295,7 +295,7 @@ final class App
         $ctrlConfig = $routerConfig['controller'];
 
         $this->router->setAutoRouting($routerConfig['autoRouting']);
-        $this->router->setFolderRouting($routerConfig['folderRouting'] ?? true, $routerConfig['folderRoutingPath'] ?? static::$rootPath . '/public/');
+        $this->router->setFolderRouting($routerConfig['folderRouting']['enabled'] ?? true, $routerConfig['folderRouting']['path'] ?? static::$rootPath . '/public/');
         $this->router->setRoutingFallback($routerConfig['fallbackRouting']);
         $this->router->setDefaultController($ctrlConfig['default']);
         $this->router->setControllerNamespace($ctrlConfig['namespace']);
