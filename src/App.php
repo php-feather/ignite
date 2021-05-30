@@ -15,6 +15,7 @@ use Feather\Cache\ICache;
 use Feather\Session\Drivers\ISessionHandler;
 use Feather\Ignite\Container\AppContainer;
 use Feather\Ignite\ErrorHandler\IErrorHandler;
+use Feather\Ignite\ErrorHandler\ErrorResolver;
 
 /**
  * Handles errors thrown by application
@@ -100,6 +101,9 @@ final class App
 
     /** @var string * */
     protected $errorPage;
+
+    /** @var \Feather\Ignite\ErrorHandler\ErrorResolver * */
+    protected $errorResolver;
 
     /** @var string * */
     protected $errorViewEngine = 'native';
@@ -266,9 +270,15 @@ final class App
 
         if ($this->request->isAjax) {
             $this->response->renderJson($msg, [], $code);
-        } else if ($this->errorPage) {
-            $viewEngine = $this->viewEngines[strtolower($this->errorViewEngine)];
-            $this->response->renderView($viewEngine->render($this->errorPage, ['message' => $msg, 'code' => $code, 'file' => $file, 'line' => $line]), [], $code);
+        } else if ($this->errorResolver) {
+
+            $errorPage = $this->errorResolver->resolve($code);
+            $viewEngine = $this->viewEngines[strtolower($this->errorViewEngine)] ?? null;
+            if ($errorPage && $viewEngine) {
+                $this->response->renderView($viewEngine->render($this->errorPage, ['message' => $msg, 'code' => $code, 'file' => $file, 'line' => $line]), [], $code);
+            } else {
+                $this->response->rawOutput($msg, $code, ['Content-Type: text/html']);
+            }
         } else {
             $this->response->rawOutput($msg, $code, ['Content-Type: text/html']);
         }
@@ -300,13 +310,20 @@ final class App
         $ctrlConfig = $routerConfig['controller'];
 
         $this->router->setAutoRouting($routerConfig['autoRouting']);
+
+        $folderPath = $routerConfig['folderRouting']['path'] ?? 'public/';
+
         $this->router->setFolderRouting($routerConfig['folderRouting']['enabled'] ?? true,
-                $routerConfig['folderRouting']['path'] ?? static::$rootPath . '/public/',
+                static::$rootPath . $folderPath,
                 $routerConfig['folderRouting']['defaultFile'] ?? 'index.php');
+
         $this->router->setRoutingFallback($routerConfig['fallbackRouting']);
+
         $this->router->setDefaultController($ctrlConfig['default']);
+
         $this->router->setControllerNamespace($ctrlConfig['namespace']);
-        $this->router->setControllerPath($ctrlConfig['baseDirectory']);
+
+        $this->router->setControllerPath(static::$rootPath . $ctrlConfig['baseDirectory']);
 
         if ($routerConfig['cache']['enabled']) {
 
@@ -324,7 +341,7 @@ final class App
             }
         }
         //load registered routes
-        $this->load($routerConfig['registeredRoutes']);
+        $this->load(static::$rootPath . $routerConfig['registeredRoutes']);
     }
 
     /**
@@ -360,7 +377,8 @@ final class App
      */
     public function registerErrorHandler(IErrorHandler $errorhandler)
     {
-        $this->errorHandler = $errorhandler;
+        static::$errorHandler = $errorhandler;
+        static::$errorHandler->register();
     }
 
     /**
@@ -375,21 +393,31 @@ final class App
 
     /**
      * Sets page to display errors on and render engine to use when rendering page
-     * @param string $page
-     * @param string $pageRenderer Registered name of view Engine
+     * @param string $defaultview
+     * @param string $viewEngine Registered name of view Engine
      */
-    public function setErrorPage($page, $pageRenderer)
+
+    /**
+     *
+     * @param string $rootDir
+     * @param string $defaultview
+     * @param string $viewEngine
+     */
+    public function setErrorPage($rootDir, $defaultview, $viewEngine)
     {
 
-        if (stripos($page, '/') > 0) {
-            $page = '/' . $page;
-        }
+        $this->errorResolver = new ErrorResolver();
+        $this->errorResolver->setRootPath(static::$rootPath . $rootDir, $defaultview);
 
-        if (file_exists(static::$viewsPath . $page)) {
-            $this->errorPage = $page;
-        }
+        /* if (stripos($defaultview, '/') > 0) {
+          $defaultview = '/' . $defaultview;
+          }
 
-        $this->errorViewEngine = $pageRenderer;
+          if (file_exists(static::$viewsPath . $defaultview)) {
+          $this->errorPage = $defaultview;
+          } */
+
+        $this->errorViewEngine = $viewEngine;
     }
 
     /**
@@ -577,7 +605,7 @@ final class App
             default :
                 $conf = $cacheConfig['drivers']['file'];
                 $driver = $conf['driver'];
-                return $driver::getInstance($conf['path']);
+                return $driver::getInstance(static::$rootPath . $conf['path']);
 
             case 'database':
                 $conf = $cacheConfig['drivers']['database'];
@@ -605,7 +633,7 @@ final class App
             default :
                 $conf = $sessionConfig['drivers']['file'];
                 $driver = $conf['driver'];
-                return new $driver($conf['path']);
+                return new $driver(static::$rootPath . $conf['path']);
 
             case 'database':
                 $conf = $sessionConfig['drivers']['database'];
