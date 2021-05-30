@@ -230,12 +230,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-feather/init.git",
-                "reference": "81b7c95939bd646a4596a5a998166d2400865fe5"
+                "reference": "4e383bd54b023307464913b1a6bf5db974525a80"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-feather/init/zipball/81b7c95939bd646a4596a5a998166d2400865fe5",
-                "reference": "81b7c95939bd646a4596a5a998166d2400865fe5",
+                "url": "https://api.github.com/repos/php-feather/init/zipball/4e383bd54b023307464913b1a6bf5db974525a80",
+                "reference": "4e383bd54b023307464913b1a6bf5db974525a80",
                 "shasum": ""
             },
             "require": {
@@ -270,7 +270,7 @@
                 "issues": "https://github.com/php-feather/init/issues",
                 "source": "https://github.com/php-feather/init/tree/master"
             },
-            "time": "2021-05-29T18:33:07+00:00"
+            "time": "2021-05-30T01:51:45+00:00"
         },
         {
             "name": "php-feather/security",
