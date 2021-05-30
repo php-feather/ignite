@@ -17,7 +17,8 @@
         "php-feather/cache": "dev-master",
         "php-feather/session": "dev-master",
         "php-feather/view": "dev-master",
-        "vlucas/phpdotenv": "5.*"
+        "vlucas/phpdotenv": "5.*",
+        "filp/whoops": "^2.12"
     },
     "autoload": {
         "psr-4": {

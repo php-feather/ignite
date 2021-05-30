@@ -14,6 +14,7 @@ use Feather\Init\Http\Response;
 use Feather\Cache\ICache;
 use Feather\Session\Drivers\ISessionHandler;
 use Feather\Ignite\Container\AppContainer;
+use Feather\Ignite\ErrorHandler\IErrorHandler;
 
 /**
  * Handles errors thrown by application
@@ -67,12 +68,12 @@ function fatalErrorHandler()
 }
 
 //Register fatal error handler
-register_shutdown_function(function() {
-    fatalErrorHandler();
-});
+/* register_shutdown_function(function() {
+  fatalErrorHandler();
+  }) */;
 
 //Register error handler
-set_error_handler('Feather\Ignite\defaultErrorHandler');
+//set_error_handler('Feather\Ignite\defaultErrorHandler');
 
 /**
  * Description of App
@@ -96,13 +97,17 @@ final class App
 
     /** @var \Feather\Init\Http\Routing\Router * */
     protected $router;
+
+    /** @var string * */
     protected $errorPage;
+
+    /** @var string * */
     protected $errorViewEngine = 'native';
 
     /** @var array * */
     protected $viewEngines = [];
 
-    /** @var \Feather\Ignite\ErrorHandler * */
+    /** @var \Feather\Ignite\ErrorHandler\IErrorHandler * */
     protected static $errorHandler;
 
     /** @var \Feather\Cache\ICache * */
@@ -238,7 +243,7 @@ final class App
 
     /**
      * Get instance of App error Handler
-     * @return \Feather\Ignite\ErrorHandler $errorhandler | null
+     * @return \Feather\Ignite\ErrorHandler\IErrorHandler $errorhandler|null
      */
     public function errorHandler()
     {
@@ -351,9 +356,9 @@ final class App
 
     /**
      *
-     * @param \Feather\Ignite\ErrorHandler $errorhandler
+     * @param \Feather\Ignite\ErrorHandler\IErrorHandler $errorhandler
      */
-    public function registerErrorHandler(ErrorHandler $errorhandler)
+    public function registerErrorHandler(IErrorHandler $errorhandler)
     {
         $this->errorHandler = $errorhandler;
     }
