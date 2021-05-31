@@ -2,12 +2,6 @@
 
 namespace Feather\Ignite;
 
-use Feather\View\IView;
-/**
- * Description of App
- *
- * @author fcarbah
- */
 use Feather\Init\Http\Routing\Router;
 use Feather\Init\Http\Request;
 use Feather\Init\Http\Response;
@@ -16,6 +10,7 @@ use Feather\Session\Drivers\ISessionHandler;
 use Feather\Ignite\Container\AppContainer;
 use Feather\Ignite\ErrorHandler\IErrorHandler;
 use Feather\Ignite\ErrorHandler\ErrorResolver;
+use Feather\View\IView;
 
 /**
  * Description of App
@@ -68,7 +63,7 @@ final class App
      * List of objects registered in application Container
      * @var Feather\Ignite\Container\AppContainer
      */
-    protected $container = [];
+    protected $container;
 
     /**
      * App Configurations
@@ -92,15 +87,6 @@ final class App
     protected static $tempViewsPath;
 
     private function __construct()
-    {
-
-    }
-
-    /**
-     * Initialize Application
-     * request response and router
-     */
-    public function initialize()
     {
         $this->request = Request::getInstance();
         $this->response = Response::getInstance();
@@ -346,18 +332,8 @@ final class App
      */
     public function setErrorPage($rootDir, $defaultview, $viewEngine)
     {
-
         $this->errorResolver = new ErrorResolver();
         $this->errorResolver->setRootPath(static::$rootPath . $rootDir, $defaultview);
-
-        /* if (stripos($defaultview, '/') > 0) {
-          $defaultview = '/' . $defaultview;
-          }
-
-          if (file_exists(static::$viewsPath . $defaultview)) {
-          $this->errorPage = $defaultview;
-          } */
-
         $this->errorViewEngine = $viewEngine;
     }
 
