@@ -272,10 +272,10 @@ final class App
             $this->response->renderJson($msg, [], $code);
         } else if ($this->errorResolver) {
 
-            $errorPage = $this->errorResolver->resolve($code);
+            $errorPage = str_replace(static::$viewsPath, '', $this->errorResolver->resolve($code));
             $viewEngine = $this->viewEngines[strtolower($this->errorViewEngine)] ?? null;
             if ($errorPage && $viewEngine) {
-                $this->response->renderView($viewEngine->render($this->errorPage, ['message' => $msg, 'code' => $code, 'file' => $file, 'line' => $line]), [], $code);
+                $this->response->renderView($viewEngine->render($errorPage, ['message' => $msg, 'code' => $code, 'file' => $file, 'line' => $line]), [], $code);
             } else {
                 $this->response->rawOutput($msg, $code, ['Content-Type: text/html']);
             }
@@ -563,11 +563,11 @@ final class App
      */
     public static function setBasePaths($root, $config, $log, $views, $tempViews = '')
     {
-        static::$rootPath = $root;
-        static::$configPath = $config;
-        static::$logPath = $log;
-        static::$viewsPath = $views;
-        static::$tempViewsPath = $tempViews;
+        static::$rootPath = preg_replace('/\/{2,}/', '/', $root);
+        static::$configPath = preg_replace('/\/{2,}/', '/', $config);
+        static::$logPath = preg_replace('/\/{2,}/', '/', $log);
+        static::$viewsPath = preg_replace('/\/{2,}/', '/', $views);
+        static::$tempViewsPath = preg_replace('/\/{2,}/', '/', $tempViews);
     }
 
     /**
