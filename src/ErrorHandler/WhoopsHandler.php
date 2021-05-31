@@ -10,7 +10,7 @@ use Whoops\Run;
  *
  * @author fcarbah
  */
-class DefaultHandler implements IErrorHandler
+class WhoopsHandler implements IErrorHandler
 {
 
     public function register()

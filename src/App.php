@@ -18,65 +18,6 @@ use Feather\Ignite\ErrorHandler\IErrorHandler;
 use Feather\Ignite\ErrorHandler\ErrorResolver;
 
 /**
- * Handles errors thrown by application
- * @param int|string $code
- * @param string $message
- * @param string $file
- * @param int $line
- * @return void
- */
-function defaultErrorHandler($code, $message, $file, $line, $errorContext = array())
-{
-
-    $msg = "ERR CODE: $code\nMESSAGE:$message\nFILE:$file || $line";
-
-    $app = App::getInstance();
-
-    $app->log($msg);
-
-    if ($app->errorHandler()) {
-        return $app->errorHandler()->handle($code, $message, $file, $line);
-    }
-
-    if (preg_match('/(.*?)Controllers(.*?)\'\snot\sfound/i', $message)) {
-        return $app->errorResponse('Page Not Found', 404);
-    }
-    $app->errorResponse('Internal Server Error' . PHP_EOL . $message, 500, $file, $line);
-}
-
-/**
- * Handles fatal errors thrown by application
- * @return boolean|void
- */
-function fatalErrorHandler()
-{
-    $last_error = error_get_last();
-
-    if (!$last_error) {
-        return;
-    }
-
-    if ($last_error['type'] === E_ERROR) {
-        defaultErrorHandler(E_ERROR, $last_error['message'], $last_error['file'], $last_error['line']);
-    } else {
-        $code = $last_error['type'];
-        $message = $last_error['message'];
-        $file = $last_error['file'];
-        $line = $last_error['line'];
-        App::log("ERR CODE: $code\nMESSAGE:$message\nFILE:$file || $line");
-        return true;
-    }
-}
-
-//Register fatal error handler
-/* register_shutdown_function(function() {
-  fatalErrorHandler();
-  }) */;
-
-//Register error handler
-//set_error_handler('Feather\Ignite\defaultErrorHandler');
-
-/**
  * Description of App
  *
  * @author fcarbah
@@ -510,12 +451,7 @@ final class App
 
     public function run()
     {
-
-        try {
-            return $this->router->processRequest($this->request->uri, $this->request->method);
-        } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), $e->getCode());
-        }
+        return $this->router->processRequest($this->request->uri, $this->request->method);
     }
 
     /**

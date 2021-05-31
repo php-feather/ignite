@@ -12,20 +12,27 @@ use Feather\Ignite\App;
 class LiveHandler implements IErrorHandler
 {
 
+    /** @var int * */
     protected $errorType = E_ALL;
+
+    /** @var callable * */
+    protected $customHandler;
 
     public function errorHandler($code, $message, $file, $line, $errorContext = array())
     {
+        $summary = preg_replace('/(.*?)(\r*\n)(.*)/', '$1', $message);
+
         $msg = "ERR CODE: $code\nMESSAGE:$message\nFILE:$file Line:$line";
 
         $app = App::getInstance();
 
         $app->log($msg);
 
-        if (preg_match('/(.*?)Controllers(.*?)\'\snot\sfound/i', $message)) {
-            return $app->errorResponse('Requested Resource Not Found', 404);
+        if ($this->customHandler) {
+            return call_user_func_array($this->customHandler, [$code, $message, $file, $line]);
         }
-        $app->errorResponse('Internal Server Error' . PHP_EOL . $message, 500, $file, $line);
+
+        $app->errorResponse($summary, $code, $file, $line);
     }
 
     public function exceptionHandler(\Throwable $e)
@@ -39,6 +46,11 @@ class LiveHandler implements IErrorHandler
         set_error_handler([$this, 'errorHandler'], $this->errorType);
         set_exception_handler([$this, 'exceptionHandler']);
         register_shutdown_function([$this, 'shutdownHandler']);
+    }
+
+    public function setCustomHandler(callable $errHandler)
+    {
+        $this->customHandler = $errHandler;
     }
 
     /**
