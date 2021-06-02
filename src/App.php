@@ -7,7 +7,6 @@ use Feather\Init\Http\Request;
 use Feather\Init\Http\Response;
 use Feather\Cache\ICache;
 use Feather\Session\Drivers\ISessionHandler;
-use Feather\Support\Container\Singleton as AppContainer;
 use Feather\Ignite\ErrorHandler\IErrorHandler;
 use Feather\Ignite\ErrorHandler\ErrorResolver;
 use Feather\View\IView;
@@ -61,7 +60,7 @@ final class App
 
     /**
      * List of objects registered in application Container
-     * @var \Feather\Support\Container\Singleton
+     * @var \Feather\Ignite\AppContainer
      */
     protected $container;
 
