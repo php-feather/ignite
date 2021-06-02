@@ -17,6 +17,7 @@
         "php-feather/cache": "dev-master",
         "php-feather/session": "dev-master",
         "php-feather/view": "dev-master",
+        "php-feather/support": "dev-main",
         "vlucas/phpdotenv": "5.*",
         "filp/whoops": "^2.12"
     },

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c36a389b98ffdd586f1b78efd3539135",
+    "content-hash": "7d03a91e6c4c8001cd3581cdf2c818bc",
     "packages": [
         {
             "name": "filp/whoops",
@@ -301,12 +301,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-feather/init.git",
-                "reference": "4e383bd54b023307464913b1a6bf5db974525a80"
+                "reference": "f902108c57eb5b83dc4765cdb8c29e23e09ad47a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-feather/init/zipball/4e383bd54b023307464913b1a6bf5db974525a80",
-                "reference": "4e383bd54b023307464913b1a6bf5db974525a80",
+                "url": "https://api.github.com/repos/php-feather/init/zipball/f902108c57eb5b83dc4765cdb8c29e23e09ad47a",
+                "reference": "f902108c57eb5b83dc4765cdb8c29e23e09ad47a",
                 "shasum": ""
             },
             "require": {
@@ -314,7 +314,8 @@
                 "php": ">=7.0",
                 "php-feather/cache": "dev-master",
                 "php-feather/security": "dev-master",
-                "php-feather/session": "dev-master"
+                "php-feather/session": "dev-master",
+                "php-feather/support": "dev-main"
             },
             "default-branch": true,
             "type": "library",
@@ -341,7 +342,7 @@
                 "issues": "https://github.com/php-feather/init/issues",
                 "source": "https://github.com/php-feather/init/tree/master"
             },
-            "time": "2021-05-30T01:51:45+00:00"
+            "time": "2021-06-02T20:43:39+00:00"
         },
         {
             "name": "php-feather/security",
@@ -429,6 +430,53 @@
                 "source": "https://github.com/php-feather/session/tree/master"
             },
             "time": "2021-04-25T19:45:33+00:00"
+        },
+        {
+            "name": "php-feather/support",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-feather/support.git",
+                "reference": "22be23e0bda416e2555d195c16a623ffb881e6b4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-feather/support/zipball/22be23e0bda416e2555d195c16a623ffb881e6b4",
+                "reference": "22be23e0bda416e2555d195c16a623ffb881e6b4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Feather\\Support\\": "src/Support"
+                },
+                "files": [
+                    "src/Support/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Francis Carbah",
+                    "email": "afrounit@hotmail.com"
+                }
+            ],
+            "description": "Feather Support - Library",
+            "support": {
+                "issues": "https://github.com/php-feather/support/issues",
+                "source": "https://github.com/php-feather/support/tree/main"
+            },
+            "time": "2021-06-02T02:41:23+00:00"
         },
         {
             "name": "php-feather/view",
@@ -1112,7 +1160,8 @@
         "php-feather/init": 20,
         "php-feather/cache": 20,
         "php-feather/session": 20,
-        "php-feather/view": 20
+        "php-feather/view": 20,
+        "php-feather/support": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
