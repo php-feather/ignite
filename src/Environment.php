@@ -64,6 +64,7 @@ final class Environment
     {
         switch ($this->env) {
             case static::DEVELOPMENT:
+            default:
                 return 'development';
             case static::TEST:
                 return 'test';
