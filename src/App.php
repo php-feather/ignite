@@ -194,7 +194,7 @@ final class App
             ob_clean();
         }
 
-        if ($this->request->isAjax) {
+        if ($this->request->isAjax()) {
             $this->response->renderJson($msg, [], $code);
         } else if ($this->errorResolver) {
 
@@ -426,7 +426,7 @@ final class App
 
     public function run()
     {
-        return $this->router->processRequest($this->request->uri, $this->request->method);
+        return $this->router->processRequest($this->request->getPath(), $this->request->getHttpMethod());
     }
 
     /**
