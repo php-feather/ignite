@@ -211,7 +211,9 @@ final class App
             $this->response->rawOutput($msg, $resCode, ['Content-Type: text/html']);
         }
 
-        return $this->response->send();
+        $this->response->send();
+
+        exit();
     }
 
     /**
