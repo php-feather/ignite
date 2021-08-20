@@ -194,6 +194,10 @@ final class App
             ob_clean();
         }
 
+        if ($code < 200) {
+            $code = 500;
+        }
+
         if ($this->request->isAjax()) {
             $this->response->renderJson($msg, [], $code);
         } else if ($this->errorResolver) {
