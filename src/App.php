@@ -194,23 +194,21 @@ final class App
             ob_clean();
         }
 
-        if ($code < 200) {
-            $code = 500;
-        }
+        $resCode = (intval($code) < 200 && intval($code) >= 100) ? 500 : $code;
 
         if ($this->request->isAjax()) {
             $this->response->renderJson($msg, [], $code);
         } else if ($this->errorResolver) {
 
-            $errorPage = str_replace(static::$viewsPath, '', $this->errorResolver->resolve($code));
+            $errorPage = str_replace(static::$viewsPath, '', $this->errorResolver->resolve($resCode));
             $viewEngine = $this->viewEngines[strtolower($this->errorViewEngine)] ?? null;
             if ($errorPage && $viewEngine) {
-                $this->response->renderView($viewEngine->render($errorPage, ['message' => $msg, 'code' => $code, 'file' => $file, 'line' => $line]), [], $code);
+                $this->response->renderView($viewEngine->render($errorPage, ['message' => $msg, 'code' => $code, 'file' => $file, 'line' => $line]), [], $resCode);
             } else {
-                $this->response->rawOutput($msg, $code, ['Content-Type: text/html']);
+                $this->response->rawOutput($msg, $resCode, ['Content-Type: text/html']);
             }
         } else {
-            $this->response->rawOutput($msg, $code, ['Content-Type: text/html']);
+            $this->response->rawOutput($msg, $resCode, ['Content-Type: text/html']);
         }
 
         return $this->response->send();
