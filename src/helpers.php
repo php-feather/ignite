@@ -1,12 +1,26 @@
 <?php
 
+use Feather\View\IView;
+
 global $input;
 $input = Feather\Init\Http\Input::getInstance();
 global $app;
 $app = \Feather\Ignite\App::getInstance();
 
 /**
+ * Returns absolute path to asset base on relative path
+ * @param string $path
+ * @return string
+ */
+function asset($path)
+{
+    $relPath = substr($path, 0, 1) == '/' ? substr($path, 1) : $path;
+    return stripos($relPath, 'assets/') === 0 ? '/' . $relPath : '/assets/' . $relPath;
+}
+
+/**
  * Returns absolute path to relative path
+ * @global \Feather\Ignite\App $app
  * @param string $relPath
  * @return string
  */
@@ -103,7 +117,39 @@ function fa_encrypt($value)
 }
 
 /**
+ *
+ * @param string $path
+ * @param string $fileToFind Nae of file to find
+ * @return string
+ */
+function find_file($path, $fileToFind)
+{
+
+    $files = scandir($path);
+    $found = null;
+
+    foreach ($files as $file) {
+
+        if ($file == '.' || $file == '..') {
+            continue;
+        }
+
+        if (is_dir($path . '/' . $file)) {
+            $found = find_file($path . '/' . $file, $fileToFind);
+        }
+
+        if (strcasecmp($file, $fileToFind) == 0) {
+            $found = $path . '/' . $fileToFind;
+            break;
+        }
+    }
+
+    return $found;
+}
+
+/**
  * Loads a config file
+ * @global \Feather\Ignite\App $app
  * @param string $relConfigFilepath
  * @return mixed
  */
@@ -134,32 +180,6 @@ function get_env($key, $default = null)
 }
 
 /**
- * Returns
- * @param string $relPath
- * @return return
- */
-function views_path($relPath = '')
-{
-    global $app;
-    $path = (stripos($relPath, '/') === 0) ? $app->viewsPath() . $relPath : $app->viewsPath() . "/$relPath";
-    return str_replace('//', '/', $path);
-}
-
-/**
- *
- * @param string $template
- * @param array $data
- * @param string $viewEngine
- * @return type
- */
-function view($template, array $data, $viewEngine = 'native')
-{
-    global $app;
-    $engine = $app->getViewEngine($viewEngine);
-    return $engine->render($template, $data);
-}
-
-/**
  *
  * @global \Feather\Init\Http\Input $input
  * @param string $name
@@ -168,43 +188,7 @@ function view($template, array $data, $viewEngine = 'native')
  */
 function get_value($name, $default = '')
 {
-    global $input;
-
-    $all = $input->all();
-    if (isset($all[$name])) {
-        return $all[$name];
-    }
-    return $default;
-}
-
-/**
- * Returns fullpath to asset base on relative path
- * @param string $path
- * @return string
- */
-function asset($path)
-{
-    $relPath = substr($path, 0, 1) == '/' ? substr($path, 1) : $path;
-    return stripos($relPath, 'assets/') === 0 ? '/' . $relPath : '/assets/' . $relPath;
-}
-
-/**
- * Return full url
- * @param string $uri
- * @return string
- */
-function url($uri)
-{
-    return (substr($uri, 0, 1) == '/') ? $uri : '/' . $uri;
-}
-
-/**
- * Return Previous Url
- * @return string|null
- */
-function url_prev()
-{
-    return Feather\Http\Session::get(PREV_REQ_KEY);
+    return old($name, $default);
 }
 
 /**
@@ -234,32 +218,67 @@ function include_path($filename, $basePath = null)
 }
 
 /**
- *
- * @param string $path
- * @param string $fileToFind Nae of file to find
+ * Get old request parameter
+ * @global \Feather\Init\Http\Input $input
+ * @param string $name
+ * @param mixed $default
+ * @return mixed
+ */
+function old($name, $default = null)
+{
+    global $input;
+    return $input->all($name, $default);
+}
+
+/**
+ * Return full url
+ * @param string $uri
  * @return string
  */
-function find_file($path, $fileToFind)
+function url($uri)
 {
+    return (substr($uri, 0, 1) == '/') ? $uri : '/' . $uri;
+}
 
-    $files = scandir($path);
-    $found = null;
+/**
+ * Return Previous Url
+ * @return string|null
+ */
+function url_prev()
+{
+    return Feather\Http\Session::get(PREV_REQ_KEY);
+}
 
-    foreach ($files as $file) {
+/**
+ * Returns view path
+ * @global \Feather\Ignite\App $app
+ * @param string $relPath
+ * @return string
+ */
+function views_path($relPath = '')
+{
+    global $app;
+    $path = (stripos($relPath, '/') === 0) ? $app->viewsPath() . $relPath : $app->viewsPath() . "/$relPath";
+    return str_replace('//', '/', $path);
+}
 
-        if ($file == '.' || $file == '..') {
-            continue;
-        }
+/**
+ * Renders a view
+ * @global \Feather\Ignite\App $app
+ * @param string $template
+ * @param array $data
+ * @param \Feather\View\IView|string $viewEngine
+ * @return type
+ */
+function view($template, array $data, $viewEngine = 'native')
+{
+    global $app;
 
-        if (is_dir($path . '/' . $file)) {
-            $found = find_file($path . '/' . $file, $fileToFind);
-        }
-
-        if (strcasecmp($file, $fileToFind) == 0) {
-            $found = $path . '/' . $fileToFind;
-            break;
-        }
+    if ($viewEngine instanceof IView) {
+        $engine = $viewEngine;
+    } else {
+        $engine = $app->getViewEngine($viewEngine);
     }
 
-    return $found;
+    return $engine->render($template, $data);
 }
