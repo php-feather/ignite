@@ -268,7 +268,8 @@ function views_path($relPath = '')
  * @param string $template
  * @param array $data
  * @param \Feather\View\IView|string $viewEngine
- * @return type
+ * @throws \RuntimeException
+ * @return string
  */
 function view($template, array $data, $viewEngine = 'native')
 {
@@ -278,6 +279,10 @@ function view($template, array $data, $viewEngine = 'native')
         $engine = $viewEngine;
     } else {
         $engine = $app->getViewEngine($viewEngine);
+    }
+
+    if (!$engine instanceof IView) {
+        throw new \RuntimeException('View Engine not registered', -1);
     }
 
     return $engine->render($template, $data);
