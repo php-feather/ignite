@@ -43,9 +43,6 @@ final class App
     /** @var string * */
     protected $errorViewEngine = 'native';
 
-    /** @var array * */
-    protected $viewEngines = [];
-
     /** @var \Feather\Ignite\ErrorHandler\IErrorHandler * */
     protected static $errorHandler;
 
@@ -201,7 +198,9 @@ final class App
         } else if ($this->errorResolver) {
 
             $errorPage = str_replace(static::$viewsPath, '', $this->errorResolver->resolve($resCode));
-            $viewEngine = $this->viewEngines[strtolower($this->errorViewEngine)] ?? null;
+
+            $viewEngine = $this->container->get($this->errorViewEngine);
+
             if ($errorPage && $viewEngine) {
                 $this->response->renderView($viewEngine->render($errorPage, ['message' => $msg, 'code' => $code, 'file' => $file, 'line' => $line]), [], $resCode);
             } else {
@@ -223,11 +222,7 @@ final class App
      */
     public function getViewEngine($registeredName)
     {
-        $name = $registeredName;
-        if (isset($this->viewEngines[$name])) {
-            return $this->viewEngines[$name];
-        }
-        return null;
+        return $this->container->get($registeredName);
     }
 
     /**
@@ -318,7 +313,7 @@ final class App
      */
     public function registerViewEngine($name, IView $engine)
     {
-        $this->viewEngines[$name] = $engine;
+        $this->container->add($name, $engine);
     }
 
     /**
