@@ -44,13 +44,13 @@ final class App
     protected $errorViewEngine = 'native';
 
     /** @var \Feather\Ignite\ErrorHandler\IErrorHandler * */
-    protected static $errorHandler;
+    protected $errorHandler;
 
     /** @var \Feather\Cache\ICache * */
-    protected static $cacheHandler;
+    protected $cacheHandler;
 
     /** @var \Feather\Session\Drivers\ISessionHandler * */
-    protected static $sessionHandler;
+    protected $sessionHandler;
 
     /** @var \Feather\Ignite\App * */
     private static $self;
@@ -131,7 +131,7 @@ final class App
      */
     public function cache()
     {
-        return static::$cacheHandler;
+        return $this->cacheHandler;
     }
 
     /**
@@ -174,7 +174,7 @@ final class App
      */
     public function errorHandler()
     {
-        return static::$errorHandler;
+        return $this->$errorHandler;
     }
 
     /**
@@ -302,8 +302,8 @@ final class App
      */
     public function registerErrorHandler(IErrorHandler $errorhandler)
     {
-        static::$errorHandler = $errorhandler;
-        static::$errorHandler->register();
+        $this->errorHandler = $errorhandler;
+        $this->errorHandler->register();
     }
 
     /**
@@ -373,8 +373,7 @@ final class App
             case 'database':
                 $conf = $cacheConfig['drivers']['database'];
                 $driver = $conf['driver'];
-                $dbConfig = $conf['connections'][$conf['active']];
-                return $driver::getInstance($dbConfig);
+                return $driver::getInstance($this->container->get('database.' . $conf['connection']), $conf['config']);
 
             case 'redis':
                 $redisConfig = $cacheConfig['drivers']['redis'];
@@ -454,13 +453,13 @@ final class App
     public function setCaching()
     {
 
-        if (static::$cacheHandler != null) {
+        if ($this->cacheHandler != null) {
             return;
         }
 
         $config = static::$config['cache'];
 
-        static::$cacheHandler = static::getCacheDriver($config);
+        $this->cacheHandler = $this->getCacheDriver($config);
     }
 
     /**
@@ -484,7 +483,7 @@ final class App
      * Starts session
      * @returns void
      */
-    public static function startSession()
+    public function startSession()
     {
 
         $config = static::$config['session'];
@@ -498,8 +497,8 @@ final class App
 
         $options = array_merge($defaultOptions, $configOptions);
 
-        static::initSession($config);
-        static::$sessionHandler->start($options);
+        $this->initSession($config);
+        $this->sessionHandler->start($options);
     }
 
     /**
@@ -507,7 +506,7 @@ final class App
      * @param array $cacheConfig
      * @return \Feather\Cache\ICache
      */
-    protected static function getCacheDriver($cacheConfig)
+    protected function getCacheDriver($cacheConfig)
     {
 
         switch ($cacheConfig['driver']) {
@@ -520,8 +519,7 @@ final class App
             case 'database':
                 $conf = $cacheConfig['drivers']['database'];
                 $driver = $conf['driver'];
-                $dbConfig = $conf['connections'][$conf['active']];
-                return $driver::getInstance($dbConfig);
+                return $driver::getInstance($this->container->get('database.' . $conf['connection']), $conf['config']);
 
             case 'redis':
                 $redisConfig = $cacheConfig['drivers']['redis'];
@@ -535,7 +533,7 @@ final class App
      * @param array $sessionConfig
      * @return \Feather\Session\Drivers\ISessionHandler|null
      */
-    protected static function getSessionDriver($sessionConfig)
+    protected function getSessionDriver($sessionConfig)
     {
 
         switch ($sessionConfig['driver']) {
@@ -548,8 +546,7 @@ final class App
             case 'database':
                 $conf = $sessionConfig['drivers']['database'];
                 $driver = $conf['driver'];
-                $dbConfig = $conf['connections'][$conf['active']];
-                return new $driver($dbConfig);
+                return new $driver($this->container->get('database.' . $conf['connection']), $config = $conf['config']);
 
             case 'redis':
                 $conf = $sessionConfig['drivers']['redis'];
@@ -564,17 +561,17 @@ final class App
      * @throws \RuntimeExceptiion
      * @return void
      */
-    protected static function initSession($config)
+    protected function initSession($config)
     {
 
-        if (static::$sessionHandler != null) {
+        if ($this->sessionHandler != null) {
             return;
         }
 
-        static::$sessionHandler = static::getSessionDriver($config);
+        $this->sessionHandler = $this->getSessionDriver($config);
 
-        if (static::$sessionHandler != null) {
-            static::$sessionHandler->activate();
+        if ($this->sessionHandler != null) {
+            $this->sessionHandler->activate();
         } else {
             throw new \RuntimeException('Session Driver not configured');
         }
