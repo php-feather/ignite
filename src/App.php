@@ -422,9 +422,13 @@ final class App
         error_log(date('Y-m-d H:i:s') . ' - ' . $msg, 3, $filePath);
     }
 
+    /**
+     * @deprecated
+     * @return mixed
+     */
     public function run()
     {
-        return $this->router->processRequest($this->request->getPath(), $this->request->getHttpMethod());
+        return $this->router->processRequest($this->request);
     }
 
     /**

@@ -62,7 +62,11 @@ class Core
         $next = \Closure::bind($closure, $this);
         $res = $this->runMiddlewares($request, $next);
 
-        $res->send();
+        if ($res instanceof \Closure) {
+            $res = $res();
+        }
+
+        return $res->send();
     }
 
     /**
