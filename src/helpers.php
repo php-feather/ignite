@@ -192,29 +192,28 @@ function get_value($name, $default = '')
 }
 
 /**
- *  Returns absolute path of file
- * @global Feather\Ignite\App $app
- * @param string $filename Name of file
- * @param string $basePath full path to parent directory to search. Defaults to views path
- * @return string
+ * Native View helper for including sub views 
+ * by just specifying the relative path of the file in the root view directory
+ * @global \Feather\Ignite\App $app
+ * @param string $filename
  */
-function include_path($filename, $basePath = null)
+function include_view(string $filename)
 {
     global $app;
 
-    if ($basePath == null) {
-        $basePath = $app->viewsPath();
+    $file = trim($filename);
+    $viewPath = $app->viewsPath();
+
+
+    if (!preg_match('/(\.php)$/', $file)) {
+        $file .= '.php';
     }
 
-    $includePath = find_file($basePath, $filename);
-
-    if ($includePath == null) {
-        return;
-    } else {
-        $includePath = str_replace($basePath . '/', '', $includePath);
+    if (stripos($file, $viewPath) === false) {
+        $file = $viewPath . $file;
     }
 
-    return $includePath;
+    include $file;
 }
 
 /**
