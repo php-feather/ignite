@@ -10,13 +10,14 @@ use Feather\Session\Drivers\ISessionHandler;
 use Feather\Ignite\ErrorHandler\IErrorHandler;
 use Feather\Ignite\ErrorHandler\ErrorResolver;
 use Feather\View\IView;
+use Feather\Support\Contracts\IApp;
 
 /**
  * Description of App
  *
  * @author fcarbah
  */
-final class App
+final class App implements IApp
 {
 
     /** @var string * */
@@ -146,10 +147,13 @@ final class App
     /**
      * Retrieve object registered in app container by name
      * @param string $key key data to retrieve
-     * @return mixed
+     * @return \Feather\Support\Container\IContainer|mixed
      */
     public function container($key)
     {
+        if ($key === null) {
+            return $this->container;
+        }
 
         if ($this->container->hasKey($key)) {
             return $this->container->get($key);
