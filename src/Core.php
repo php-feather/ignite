@@ -33,6 +33,9 @@ class Core
     /** @var array * */
     protected $routeMiddlewares = [];
 
+    /** @var \Feather\Init\Middleware\MiddlewareResolver * */
+    protected $middlewareResolver;
+
     /**
      *
      * @param \Feather\Ignite\App $app
@@ -42,9 +45,9 @@ class Core
     {
         $this->app = $app;
         $this->router = $router;
-        $mwResolver = new MiddlewareResolver();
-        $mwResolver->registerMiddlewares($this->routeMiddlewares);
-        Route::setMiddleWareResolver($mwResolver);
+        $this->middlewareResolver = new MiddlewareResolver();
+        $this->middlewareResolver->registerMiddlewares($this->routeMiddlewares);
+        Route::setMiddleWareResolver($this->middlewareResolver);
     }
 
     /**
@@ -81,15 +84,13 @@ class Core
      *
      * @param Feather\Init\Http\Request $request
      * @param \Closure|\Feather\Init\Http\Response $next
-     * @return type
+     * @return \Closure|\Feather\Init\Http\Response
      */
     protected function runMiddlewares(Request $request, $next)
     {
         foreach ($this->globalMiddlewares as $middleware) {
 
-            if (!($middleware instanceof IMiddleware)) {
-                $middleware = new $middleware();
-            }
+            $middleware = $this->middlewareResolver->resolve($middleware);
 
             $next = $middleware->run($next);
             if (!$middleware->passed()) {
@@ -110,9 +111,7 @@ class Core
 
         foreach ($httpMiddlewares as $middleware) {
 
-            if (!($middleware instanceof IMiddleware)) {
-                $middleware = new $middleware();
-            }
+            $middleware = $this->middlewareResolver->resolve($middleware);
 
             $next = $middleware->run($next);
             if (!$middleware->passed()) {
