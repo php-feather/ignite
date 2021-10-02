@@ -496,8 +496,8 @@ final class App implements IApp
 
         $config = static::$config['session'];
         $defaultOptions = [
-            'cookie_lifetime' => $config['lifetime'],
-            'gc_max_lifetime' => $config['lifetime'],
+            'cookie_lifetime' => $config['lifetime'] * 60,
+            'gc_max_lifetime' => $config['lifetime'] * 60,
             'cookie_path' => '/',
             'name' => 'FA_SESSION',
         ];
