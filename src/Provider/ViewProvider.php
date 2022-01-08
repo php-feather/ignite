@@ -1,6 +1,6 @@
 <?php
 
-namespace Feather\Ignite;
+namespace Feather\Ignite\Provider;
 
 use Feather\View\Native;
 use Feather\View\Twig;

@@ -640,23 +640,23 @@ final class App implements IApp
     protected function registerProviders()
     {
         $appProviders = array_merge(static::$config['app']['providers'] ?? [], [
-            'auth'     => AuthProvider::class,
-            'database' => DatabaseProvider::class,
-            'view'     => ViewProvider::class,
+            'auth'     => Provider\AuthProvider::class,
+            'database' => Provider\DatabaseProvider::class,
+            'view'     => Provider\ViewProvider::class,
         ]);
 
         $providers = [];
         foreach ($appProviders as $key => $class) {
-            if ($class instanceof Provider) {
+            if ($class instanceof Provider\Provider) {
                 $this->container->register($key, function() use($class) {
                     return $class->register();
                 });
-            } elseif (class_exists($class) && ($class = new $class()) instanceof Provider) {
+            } elseif (class_exists($class) && ($class = new $class()) instanceof Provider\Provider) {
                 $this->container->register($key, function() use($class) {
                     return $class->register();
                 });
             } else {
-                throw new AppException("$key is not an instance of \Feather\Support\Contracts\IProvider");
+                throw new AppException("$key is not an instance of \Feather\Ignite\Provider\Provider");
             }
             $providers[$key] = $class;
         }
