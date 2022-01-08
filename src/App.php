@@ -11,6 +11,7 @@ use Feather\Ignite\ErrorHandler\IErrorHandler;
 use Feather\Ignite\ErrorHandler\ErrorResolver;
 use Feather\View\IView;
 use Feather\Support\Contracts\IApp;
+use Feather\Ignite\Provider;
 
 /**
  * Description of App
@@ -85,9 +86,9 @@ final class App implements IApp
 
     private function __construct()
     {
-        $this->request = Request::getInstance();
-        $this->response = Response::getInstance();
-        $this->router = Router::getInstance();
+        $this->request   = Request::getInstance();
+        $this->response  = Response::getInstance();
+        $this->router    = Router::getInstance();
         $this->container = AppContainer::getInstance();
     }
 
@@ -124,6 +125,8 @@ final class App implements IApp
         }
 
         $this->loadConfigurations();
+
+        $this->registerProviders();
     }
 
     /**
@@ -146,10 +149,10 @@ final class App implements IApp
 
     /**
      * Retrieve object registered in app container by name
-     * @param string $key key data to retrieve
+     * @param string|null $key key data to retrieve. If null, the container object is returned
      * @return \Feather\Support\Container\IContainer|mixed
      */
-    public function container($key)
+    public function container(?string $key = null)
     {
         if ($key === null) {
             return $this->container;
@@ -221,6 +224,24 @@ final class App implements IApp
 
     /**
      *
+     * @return \Feather\Init\Http\Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     *
+     * @return \Feather\Init\Http\Response
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
+     *
      * @param string $registeredName
      * @return \Feather\View\IView| null
      */
@@ -269,7 +290,7 @@ final class App implements IApp
                 $this->router->setCacheHandler(static::$cacheHandler);
             }
         }
-        //load registered routes
+//load registered routes
         $this->load(static::$rootPath . $routerConfig['registeredRoutes']);
     }
 
@@ -321,12 +342,6 @@ final class App implements IApp
     }
 
     /**
-     * Sets page to display errors on and render engine to use when rendering page
-     * @param string $defaultview
-     * @param string $viewEngine Registered name of view Engine
-     */
-
-    /**
      *
      * @param string $rootDir
      * @param string $defaultview
@@ -334,7 +349,7 @@ final class App implements IApp
      */
     public function setErrorPage($rootDir, $defaultview, $viewEngine)
     {
-        $this->errorResolver = new ErrorResolver();
+        $this->errorResolver   = new ErrorResolver();
         $this->errorResolver->setRootPath(static::$rootPath . $rootDir, $defaultview);
         $this->errorViewEngine = $viewEngine;
     }
@@ -370,33 +385,48 @@ final class App implements IApp
         switch ($driver) {
             case 'file':
             default :
-                $conf = $cacheConfig['drivers']['file'];
+                $conf   = $cacheConfig['drivers']['file'];
                 $driver = $conf['driver'];
                 return $driver::getInstance($conf['path']);
 
             case 'database':
-                $conf = $cacheConfig['drivers']['database'];
+                $conf   = $cacheConfig['drivers']['database'];
                 $driver = $conf['driver'];
                 return $driver::getInstance($this->container->get('database.' . $conf['connection']), $conf['config']);
 
             case 'redis':
                 $redisConfig = $cacheConfig['drivers']['redis'];
-                $driver = $redisConfig['driver'];
+                $driver      = $redisConfig['driver'];
                 return $driver::getInstance($redisConfig['host'], $redisConfig['port'], $redisConfig['scheme'], $redisConfig['connOptions']);
         }
     }
 
     /**
-     * Load configuration from config file path
-     * @param string $configPath
+     * Get config data
+     * @param string $config Use dot(.) to get nested config values
+     * e.g. cache.expires or cache.drivers.database
      * @return mixed
      */
-    public static function getConfig($configPath)
+    public static function getConfig(string $config)
     {
         try {
-            $fullPath = stripos($configPath, '/') === 0 ? $configPath : '/' . $configPath;
-            $config = include static::$configPath . $fullPath;
-            return $config;
+            $keys = explode('.', $config);
+
+            if (empty($keys)) {
+                return null;
+            }
+
+            $value = static::$config;
+
+            foreach ($keys as $key) {
+                $value = $value[$key] ?? null;
+
+                if ($value == null) {
+                    break;
+                }
+            }
+
+            return $value;
         } catch (\Exception $e) {
             static::log($e->getMessage());
             return null;
@@ -480,10 +510,10 @@ final class App implements IApp
      */
     public static function setBasePaths($root, $config, $log, $views, $tempViews = '')
     {
-        static::$rootPath = preg_replace('/\/{2,}/', '/', $root);
-        static::$configPath = preg_replace('/\/{2,}/', '/', $config);
-        static::$logPath = preg_replace('/\/{2,}/', '/', $log);
-        static::$viewsPath = preg_replace('/\/{2,}/', '/', $views);
+        static::$rootPath      = preg_replace('/\/{2,}/', '/', $root);
+        static::$configPath    = preg_replace('/\/{2,}/', '/', $config);
+        static::$logPath       = preg_replace('/\/{2,}/', '/', $log);
+        static::$viewsPath     = preg_replace('/\/{2,}/', '/', $views);
         static::$tempViewsPath = preg_replace('/\/{2,}/', '/', $tempViews);
     }
 
@@ -494,14 +524,14 @@ final class App implements IApp
     public function startSession()
     {
 
-        $config = static::$config['session'];
+        $config         = static::$config['session'];
         $defaultOptions = [
             'cookie_lifetime' => $config['lifetime'] * 60,
             'gc_max_lifetime' => $config['lifetime'] * 60,
-            'cookie_path' => '/',
-            'name' => 'FA_SESSION',
+            'cookie_path'     => '/',
+            'name'            => 'FA_SESSION',
         ];
-        $configOptions = $config['options'];
+        $configOptions  = $config['options'];
 
         $options = array_merge($defaultOptions, $configOptions);
 
@@ -520,18 +550,18 @@ final class App implements IApp
         switch ($cacheConfig['driver']) {
             case 'file':
             default :
-                $conf = $cacheConfig['drivers']['file'];
+                $conf   = $cacheConfig['drivers']['file'];
                 $driver = $conf['driver'];
                 return $driver::getInstance(static::$rootPath . $conf['path']);
 
             case 'database':
-                $conf = $cacheConfig['drivers']['database'];
+                $conf   = $cacheConfig['drivers']['database'];
                 $driver = $conf['driver'];
                 return $driver::getInstance($this->container->get('database.' . $conf['connection']), $conf['config']);
 
             case 'redis':
                 $redisConfig = $cacheConfig['drivers']['redis'];
-                $driver = $redisConfig['driver'];
+                $driver      = $redisConfig['driver'];
                 return $driver::getInstance($redisConfig['host'], $redisConfig['port'], $redisConfig['scheme'], $redisConfig['connOptions']);
         }
     }
@@ -547,17 +577,17 @@ final class App implements IApp
         switch ($sessionConfig['driver']) {
             case 'file':
             default :
-                $conf = $sessionConfig['drivers']['file'];
+                $conf   = $sessionConfig['drivers']['file'];
                 $driver = $conf['driver'];
                 return new $driver(static::$rootPath . $conf['path']);
 
             case 'database':
-                $conf = $sessionConfig['drivers']['database'];
+                $conf   = $sessionConfig['drivers']['database'];
                 $driver = $conf['driver'];
                 return new $driver($this->container->get('database.' . $conf['connection']), $config = $conf['config']);
 
             case 'redis':
-                $conf = $sessionConfig['drivers']['redis'];
+                $conf   = $sessionConfig['drivers']['redis'];
                 $driver = $conf['driver'];
                 return new $driver($conf['host'], $conf['port'], $conf['scheme']);
         }
@@ -597,9 +627,38 @@ final class App implements IApp
         foreach ($files as $file) {
 
             if (is_file(static::$configPath . "/$file") && stripos($file, '.php') === strlen($file) - 4) {
-                $filename = substr($file, 0, strripos($file, '.php'));
+                $filename                              = substr($file, 0, strripos($file, '.php'));
                 static::$config[strtolower($filename)] = include static::$configPath . '/' . $file;
             }
+        }
+    }
+
+    /**
+     *
+     * @throws AppException
+     */
+    protected function registerProviders()
+    {
+        $appProviders = array_merge(static::$config['app']['providers'] ?? [], [
+            'auth'     => AuthProvider::class,
+            'database' => DatabaseProvider::class,
+            'view'     => ViewProvider::class,
+        ]);
+
+        $providers = [];
+        foreach ($appProviders as $key => $class) {
+            if ($class instanceof Provider) {
+                $this->container->register($key, function() use($class) {
+                    return $class->register();
+                });
+            } elseif (class_exists($class) && ($class = new $class()) instanceof Provider) {
+                $this->container->register($key, function() use($class) {
+                    return $class->register();
+                });
+            } else {
+                throw new AppException("$key is not an instance of \Feather\Support\Contracts\IProvider");
+            }
+            $providers[$key] = $class;
         }
     }
 

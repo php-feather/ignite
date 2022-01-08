@@ -5,7 +5,16 @@ use Feather\View\IView;
 global $input;
 $input = Feather\Init\Http\Input::getInstance();
 global $app;
-$app = \Feather\Ignite\App::getInstance();
+$app   = \Feather\Ignite\App::getInstance();
+
+/**
+ *
+ * @return \Feather\Ignite\App
+ */
+function app()
+{
+    return Feather\Ignite\App::getInstance();
+}
 
 /**
  * Returns absolute path to asset base on relative path
@@ -29,6 +38,20 @@ function base_path($relPath = '')
     global $app;
     $path = (stripos($relPath, '/') === 0) ? $app->basePath() . $relPath : $app->basePath() . "/$relPath";
     return str_replace('//', '/', $path);
+}
+
+/**
+ *
+ * @global \Feather\Ignite\App $app
+ * @param string $name
+ * @return \Feather\Support\Database\Connection|null
+ */
+function fa_dbconnection($name = 'default')
+{
+    global $app;
+    $prefix = Feather\Ignite\DatabaseProvider::keyPrefix();
+
+    return $app->container($prefix . $name);
 }
 
 /**
@@ -68,7 +91,7 @@ function feather_autoload($directory, $exclude = [])
  */
 function fa_csrf_token()
 {
-    $csrf = \Feather\App\Security\Csrf::getInstance();
+    $csrf  = \Feather\App\Security\Csrf::getInstance();
     $token = $csrf->generateToken();
     return $token;
 }
@@ -79,7 +102,7 @@ function fa_csrf_token()
  */
 function fa_csrf_token_input()
 {
-    $id = CSRF_ID;
+    $id    = CSRF_ID;
     $token = fa_csrf_token();
     return <<<TOKEN
     <input type="hidden" name="$id" value="$token" />
@@ -158,7 +181,7 @@ function get_config($relConfigFilepath)
     global $app;
     try {
         $fullPath = stripos($relConfigFilepath, '/') === 0 ? $relConfigFilepath : '/' . $relConfigFilepath;
-        $config = include $app->configPath() . $fullPath;
+        $config   = include $app->configPath() . $fullPath;
         return $config;
     } catch (Exception $e) {
         $app->log($e->getMessage());
@@ -192,7 +215,7 @@ function get_value($name, $default = '')
 }
 
 /**
- * Native View helper for including sub views 
+ * Native View helper for including sub views
  * by just specifying the relative path of the file in the root view directory
  * @global \Feather\Ignite\App $app
  * @param string $filename
@@ -201,7 +224,7 @@ function include_view(string $filename)
 {
     global $app;
 
-    $file = trim($filename);
+    $file     = trim($filename);
     $viewPath = $app->viewsPath();
 
 
@@ -277,7 +300,7 @@ function view($template, array $data, $viewEngine = 'native')
     if ($viewEngine instanceof IView) {
         $engine = $viewEngine;
     } else {
-        $engine = $app->getViewEngine($viewEngine);
+        $engine = $app->container('view')->get($viewEngine);
     }
 
     if (!$engine instanceof IView) {
