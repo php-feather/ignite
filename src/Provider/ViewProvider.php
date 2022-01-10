@@ -27,17 +27,17 @@ class ViewProvider extends Provider
         $container = new Container();
 
         //blade engine
-        $container->register($this->keyPrefix . 'blade', function() use($basePath, $viewsPath) {
+        $container->register('blade', function() use($basePath, $viewsPath) {
             return new Blade($viewsPath, $basePath . '/storage/app/');
         });
 
         //native engine
-        $container->register($this->keyPrefix . 'native', function() use($basePath, $viewsPath) {
+        $container->register('native', function() use($basePath, $viewsPath) {
             return new Native($viewsPath, $basePath . '/storage/app/');
         });
 
         //twig engine
-        $container->register($this->keyPrefix . 'twig', function() use($viewsPath) {
+        $container->register('twig', function() use($viewsPath) {
             return new Twig($viewsPath);
         });
 
