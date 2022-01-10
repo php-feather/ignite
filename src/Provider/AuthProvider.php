@@ -12,11 +12,16 @@ use Feather\Ignite\Auth;
 class AuthProvider extends Provider
 {
 
+    /**
+     *
+     * @return \Feather\Auth\IAuthenticator
+     * @throws \Exception
+     */
     public function register()
     {
         $config = $this->app->getConfig('auth');
 
-        if (!empty($authConfig)) {
+        if (!empty($config)) {
 
             $authConfig  = $config['authenticators'][$config['authenticator']];
             $guardConfig = $config['guards'][$config['guard']];
