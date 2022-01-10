@@ -2,8 +2,6 @@
 
 namespace Feather\Ignite\Provider;
 
-use Feather\Ignite\Auth;
-
 /**
  * Description of AuthProvider
  *
