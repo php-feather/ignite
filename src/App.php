@@ -198,7 +198,8 @@ final class App implements IApp
             ob_clean();
         }
 
-        $resCode = (intval($code) < 500) ? 500 : intval($code);
+        $intCode = (int) $code;
+        $resCode = ($intCode < 200) ? 500 : $intCode;
 
         if ($this->request->isAjax()) {
             $this->response->renderJson($msg, [], $code);
