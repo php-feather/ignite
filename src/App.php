@@ -198,7 +198,7 @@ final class App implements IApp
             ob_clean();
         }
 
-        $resCode = (intval($code) < 200 && intval($code) >= 100) ? 500 : $code;
+        $resCode = (intval($code) < 500) ? 500 : intval($code);
 
         if ($this->request->isAjax()) {
             $this->response->renderJson($msg, [], $code);
@@ -206,7 +206,7 @@ final class App implements IApp
 
             $errorPage = str_replace(static::$viewsPath, '', $this->errorResolver->resolve($resCode));
 
-            $viewEngine = $this->container->get($this->errorViewEngine);
+            $viewEngine = $this->container->get('view')->get($this->errorViewEngine);
 
             if ($errorPage && $viewEngine) {
                 $this->response->renderView($viewEngine->render($errorPage, ['message' => $msg, 'code' => $code, 'file' => $file, 'line' => $line]), [], $resCode);
