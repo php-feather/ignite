@@ -528,7 +528,6 @@ final class App implements IApp
         $config         = static::$config['session'];
         $defaultOptions = [
             'cookie_lifetime' => $config['lifetime'] * 60,
-            'gc_max_lifetime' => $config['lifetime'] * 60,
             'cookie_path'     => '/',
             'name'            => 'FA_SESSION',
         ];
@@ -585,7 +584,7 @@ final class App implements IApp
             case 'database':
                 $conf   = $sessionConfig['drivers']['database'];
                 $driver = $conf['driver'];
-                return new $driver($this->container->get('database.' . $conf['connection']), $config = $conf['config']);
+                return new $driver($this->container->get('database')->get($conf['connection']), $conf['config']);
 
             case 'redis':
                 $conf   = $sessionConfig['drivers']['redis'];
