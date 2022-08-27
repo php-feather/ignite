@@ -39,7 +39,12 @@ class AuthProvider extends Provider
             foreach ($authConfig as $key => $data) {
 
                 if ($key === 'connection') {
-                    $data = $this->app->container('database')->get($data);
+                    try {
+                        $data = $this->app->container('database')->get($data);
+                    } catch (\PDOException | \Exception $e) {
+                        trigger_error($e->getMessage() . '. Defaulting to NullAuthencticator', E_USER_WARNING);
+                        return new \Feather\Auth\NullAuthenticator();
+                    }
                 }
 
                 $key = ucfirst($key);

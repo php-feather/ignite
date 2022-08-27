@@ -43,7 +43,7 @@ class LiveHandler implements IErrorHandler
 
     public function register()
     {
-        set_error_handler([$this, 'errorHandler'], $this->errorType);
+        set_error_handler([$this, 'errorHandler']);
         set_exception_handler([$this, 'exceptionHandler']);
         register_shutdown_function([$this, 'shutdownHandler']);
     }
@@ -75,10 +75,10 @@ class LiveHandler implements IErrorHandler
         if ($last_error['type'] === E_ERROR) {
             $this->errorHandler(E_ERROR, $last_error['message'], $last_error['file'], $last_error['line']);
         } else {
-            $code = $last_error['type'];
+            $code    = $last_error['type'];
             $message = $last_error['message'];
-            $file = $last_error['file'];
-            $line = $last_error['line'];
+            $file    = $last_error['file'];
+            $line    = $last_error['line'];
             App::log("ERR CODE: $code\nMESSAGE:$message\nFILE:$file || $line");
             return true;
         }

@@ -22,9 +22,9 @@ final class Environment
     /** @var \Feather\Ignite\Environment * */
     protected static $self;
 
-    const DEVELOPMENT = 'dev';
-    const PRODUCTION = 'prod';
-    const TEST = 'test';
+    const DEVELOPMENT = 'development';
+    const PRODUCTION  = 'production';
+    const TEST        = 'test';
 
     private function __construct($env, bool $debug)
     {
