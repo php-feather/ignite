@@ -1,6 +1,6 @@
 <?php
 
-namespace Feather\Ignite\Provider;
+namespace Feather\Ignite\Providers;
 
 use Feather\Support\Database\Connection;
 use Feather\Support\Container\Container;

@@ -11,7 +11,7 @@ use Feather\Ignite\ErrorHandler\IErrorHandler;
 use Feather\Ignite\ErrorHandler\ErrorResolver;
 use Feather\View\IView;
 use Feather\Support\Contracts\IApp;
-use Feather\Ignite\Provider;
+use Feather\Ignite\Providers\Provider;
 
 /**
  * Description of App
@@ -639,24 +639,20 @@ final class App implements IApp
      */
     protected function registerProviders()
     {
-        $appProviders = array_merge(static::$config['app']['providers'] ?? [], [
-            'auth'     => Provider\AuthProvider::class,
-            'database' => Provider\DatabaseProvider::class,
-            'view'     => Provider\ViewProvider::class,
-        ]);
+        $appProviders = static::$config['app']['providers'] ?? [];
 
         $providers = [];
         foreach ($appProviders as $key => $class) {
-            if ($class instanceof Provider\Provider) {
+            if ($class instanceof Provider) {
                 $this->container->register($key, function() use($class) {
                     return $class->register();
                 });
-            } elseif (class_exists($class) && ($class = new $class()) instanceof Provider\Provider) {
+            } elseif (class_exists($class) && ($class = new $class()) instanceof Provider) {
                 $this->container->register($key, function() use($class) {
                     return $class->register();
                 });
             } else {
-                throw new AppException("$key is not an instance of \Feather\Ignite\Provider\Provider");
+                throw new AppException("$key is not an instance of \Feather\Ignite\Providers\Provider");
             }
             $providers[$key] = $class;
         }

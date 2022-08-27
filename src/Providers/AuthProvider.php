@@ -1,6 +1,6 @@
 <?php
 
-namespace Feather\Ignite\Provider;
+namespace Feather\Ignite\Providers;
 
 /**
  * Description of AuthProvider
@@ -24,6 +24,10 @@ class AuthProvider extends Provider
             $authConfig  = $config['authenticators'][$config['authenticator']];
             $guardConfig = $config['guards'][$config['guard']];
 
+            if ($authConfig instanceof \Feather\Auth\IAuthenticator) {
+                return $authConfig;
+            }
+
             $authenticator = $authConfig['class'];
             unset($authConfig['class']);
             $auth          = new $authenticator();
@@ -38,12 +42,18 @@ class AuthProvider extends Provider
                     $data = $this->app->container('database')->get($data);
                 }
 
+                $key = ucfirst($key);
+
                 if (method_exists($auth, "set{$key}")) {
                     call_user_func_array([$auth, "set{$key}"], [$data]);
                 }
             }
 
-            $guard = $this->getGuard($guardConfig);
+            if ($guardConfig instanceof \Feather\Auth\Guard\IAuthGuard) {
+                $guard = $guardConfig;
+            } else {
+                $guard = $this->getGuard($guardConfig);
+            }
 
             $auth->setGuard($guard);
 
