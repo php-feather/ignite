@@ -42,7 +42,7 @@ class AuthProvider extends Provider
                     try {
                         $data = $this->app->container('database')->get($data);
                     } catch (\PDOException | \Exception $e) {
-                        trigger_error($e->getMessage() . '. Defaulting to NullAuthencticator', E_USER_NOTICE);
+                        error_log($e->getMessage() . '. Failed to connect to database. Defaulting to Null Authenticator');
                         return new \Feather\Auth\NullAuthenticator();
                     }
                 }
